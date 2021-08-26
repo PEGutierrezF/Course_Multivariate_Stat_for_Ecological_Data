@@ -1,5 +1,5 @@
 ---
-title: "PCA"
+title: "Principal Component Analysis (PCA)"
 author: "Pablo E. Gutiérrez-Fonseca"
 date: "8/26/2021"
 output:
@@ -12,6 +12,7 @@ output:
 
 ```{r, warning=FALSE,message=FALSE}
 
+
 library(ggplot2)
 library(dplyr)
 library(missMDA) # Imputate
@@ -19,12 +20,16 @@ library(ggfortify) # autoplot()
 library(cluster) #pam
 library(factoextra) #get_pca_var()
 
+library(devtools)
+install_github("vqv/ggbiplot") #ggbiplot
+library(ggbiplot)
+
 ```
 
 2. Segundo paso: carga los datos.
 
 ```{r}
-channel <- read.csv("data/channel_form.csv")
+channel <- read.csv("data/channel_form.csv", header=TRUE)
 head(channel)
 
 ```
@@ -37,7 +42,8 @@ summary(channel)
 
 ```
 
-2.1 Remover la variable que tiene muchos NAs y las Etiquetas (a la funcion lo le gusta), luego las agregamos.
+
+2.1 Remover la(s) variable(s) que tiene(n) mucho(s) NAs y las Etiquetas (a la funcion lo le gusta), luego las agregamos.
 
 ```{r}
 
@@ -57,6 +63,9 @@ channel_2 <- imputePCA(channel_1, ncp=2, scale = TRUE, method = c("Regularized",
                       coeff.ridge = 1, threshold = 1e-06, seed = NULL, nb.init = 1,  
                       maxiter = 1000)
 
+# class(channel_2)
+# as.data.frame(channel_2)
+
 ```
 
 3.  Vamos a correr el PCA
@@ -71,18 +80,37 @@ summary(channel.pca)
 3.1 Vamos a ver el grafico.
 
 ```{r}
-autoplot(channel.pca,loadings = TRUE, loadings.colour = 'blue',  # label = TRUE,
-         loadings.label = TRUE, loadings.label.size = 3,data= channel)
+
+autoplot(channel.pca)
+
+autoplot(channel.pca, data = channel, colour = 'Forma')
+
+autoplot(channel.pca, data = channel, colour = 'Forma', loadings = TRUE)
+
+autoplot(channel.pca, data = channel, colour = 'Forma', loadings = TRUE,
+         loadings.colour = 'blue', 
+         loadings.label = TRUE, loadings.label.size = 3)
+
 
 
 ```
 
+Otra manera de ver el grafico
+
+```{r}
+
+ggbiplot(channel.pca, labels=rownames(channel$Forma))
+
+```
 
 3.2 Ver graficamente lo que explica cada axis.
 
 ```{r}
+
+layout(matrix(1:2, ncol=2))
 screeplot(channel.pca)
 screeplot(channel.pca, type="lines")
+
 
 ```
 
@@ -99,5 +127,18 @@ res.var$coord          # Coordinates
 res.var$cos2           # Quality of representation 
 
 ```
+
+4  Otras formas de visualizar los datos.
+```{r}
+fviz_eig(channel.pca)
+
+
+fviz_pca_biplot(channel.pca, repel = TRUE,
+                col.var = "#2E9FDF", # Variables color
+                col.ind = "#696969"  # Individuals color
+                )
+
+```
+
 
 
