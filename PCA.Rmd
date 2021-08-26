@@ -1,0 +1,103 @@
+---
+title: "PCA"
+author: "Pablo E. Gutiérrez-Fonseca"
+date: "8/26/2021"
+output:
+  pdf_document: default
+---
+
+
+1. Primer paso: cargar las librerias que necesitas.
+
+
+```{r, warning=FALSE,message=FALSE}
+
+library(ggplot2)
+library(dplyr)
+library(missMDA) # Imputate
+library(ggfortify) # autoplot()
+library(cluster) #pam
+library(factoextra) #get_pca_var()
+
+```
+
+2. Segundo paso: carga los datos.
+
+```{r}
+channel <- read.csv("data/channel_form.csv")
+head(channel)
+
+```
+
+
+2.1 Vamos a examinar los datos
+
+```{r}
+summary(channel)
+
+```
+
+2.1 Remover la variable que tiene muchos NAs y las Etiquetas (a la funcion lo le gusta), luego las agregamos.
+
+```{r}
+
+channel_1 <- select(channel, -Forma, -nit, -NADBO)
+summary(channel_1)
+
+```
+
+2.2 Vamos a imputar datos.  Esto es comun para set de datos de campo, los cuales tienden a tener ceros (por mal funcionamiento de los equipos, condiciones climticas adversas que no puedemos ir al campo).  Se realiza como un paso preliminar para para
+realizar un PCA en un set de datos completos.
+
+Mas informacion aca:  https://www.rdocumentation.org/packages/missMDA/versions/1.18/topics/imputePCA
+
+```{r}
+channel_2 <- imputePCA(channel_1, ncp=2, scale = TRUE, method = c("Regularized","EM"), 
+                      row.w = NULL, ind.sup=NULL,quanti.sup=NULL,quali.sup=NULL,
+                      coeff.ridge = 1, threshold = 1e-06, seed = NULL, nb.init = 1,  
+                      maxiter = 1000)
+
+```
+
+3.  Vamos a correr el PCA
+
+```{r}
+channel.pca <- prcomp(channel_2$completeObs, center = TRUE, scale = TRUE)
+summary(channel.pca)
+
+```
+
+
+3.1 Vamos a ver el grafico.
+
+```{r}
+autoplot(channel.pca,loadings = TRUE, loadings.colour = 'blue',  # label = TRUE,
+         loadings.label = TRUE, loadings.label.size = 3,data= channel)
+
+
+```
+
+
+3.2 Ver graficamente lo que explica cada axis.
+
+```{r}
+screeplot(channel.pca)
+screeplot(channel.pca, type="lines")
+
+```
+
+
+3.3 Vamos a ver la contribucion de cada una de las variables. 
+Usamos otra libreria. factoextra
+
+```{r}
+
+get_eigenvalue(channel.pca)
+res.var <- get_pca_var(channel.pca)
+res.var$contrib        # Contributions to the PCs
+res.var$coord          # Coordinates
+res.var$cos2           # Quality of representation 
+
+```
+
+
