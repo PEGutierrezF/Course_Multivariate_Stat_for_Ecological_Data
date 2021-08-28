@@ -58,24 +58,31 @@ realizar un PCA en un set de datos completos.
 
 Mas informacion aca:  https://www.rdocumentation.org/packages/missMDA/versions/1.18/topics/imputePCA
 
+Primero separar e imputar los datos de sustrato y los fisicoquimicos por aparte.
 
 ```{r}
 
 df1 <- select(channel_1, Elevacion, Ancho, Velocidad, Rocas, Canto, grava, arena, Limo)
 df1
 
-df1a <- imputePCA(df1,ncp=2, scale = TRUE, method = c("Regularized","EM"), 
+df1a <- imputePCA(df1,ncp=4, scale = TRUE, method = c("Regularized","EM"), 
                       row.w = NULL, ind.sup=NULL,quanti.sup=NULL,quali.sup=NULL,
                       coeff.ridge = 1, threshold = 1e-06, seed = NULL, nb.init = 1,  
                       maxiter = 1000)
 
 
 df2 <- select(channel_1, Elevacion, NAN_Am, NAtemp, NASatO2, nit, NADBO)
-df2a <- imputePCA(df2, ncp=2, scale = TRUE, method = c("Regularized","EM"), 
+df2a <- imputePCA(df2, ncp=4, scale = TRUE, method = c("Regularized","EM"), 
                       row.w = NULL, ind.sup=NULL,quanti.sup=NULL,quali.sup=NULL,
                       coeff.ridge = 1, threshold = 1e-06, seed = NULL, nb.init = 1,  
                       maxiter = 1000)
 
+```
+
+
+Unir las dos tablas y seleccionar las columnas para hacer el PCA.
+
+```{r}
 df1b <- as.data.frame(df1a) # Sustrata
 df2b <- as.data.frame(df2a) # Physicochemical
 
@@ -90,6 +97,7 @@ new_channel2 <- select(new_channel,
                        )
               
 ```
+
 
 
 3.  Vamos a correr el PCA
