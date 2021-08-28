@@ -64,9 +64,10 @@ Mas informacion aca:  https://www.rdocumentation.org/packages/missMDA/versions/1
 df1 <- select(channel_1, Elevacion, Ancho, Velocidad, Rocas, Canto, grava, arena, Limo)
 df1
 
-df1a <- imputePCA(df1, ncp=2)
-df1a
-
+df1a <- imputePCA(df1,ncp=2, scale = TRUE, method = c("Regularized","EM"), 
+                      row.w = NULL, ind.sup=NULL,quanti.sup=NULL,quali.sup=NULL,
+                      coeff.ridge = 1, threshold = 1e-06, seed = NULL, nb.init = 1,  
+                      maxiter = 1000)
 
 
 df2 <- select(channel_1, Elevacion, NAN_Am, NAtemp, NASatO2, nit, NADBO)
@@ -94,6 +95,7 @@ new_channel2 <- select(new_channel,
 3.  Vamos a correr el PCA
 
 ```{r}
+
 channel.pca <- prcomp(new_channel2, center = TRUE, scale = TRUE)
 summary(channel.pca)
 
