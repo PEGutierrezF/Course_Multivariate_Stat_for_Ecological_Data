@@ -19,6 +19,8 @@ library(ggfortify) # autoplot()
 library(cluster) #pam
 library(factoextra) #get_pca_var()
 library(data.table) # data.table()
+library(labdsv) #loadings.pca(pca)
+
 library(devtools)
 
 install_github("vqv/ggbiplot") #ggbiplot
@@ -30,7 +32,7 @@ library(ggbiplot)
 
 ```{r}
 channel <- read.csv("data/channel_form.csv", header=TRUE)
-head(channel)
+#head(channel)
 
 ```
 
@@ -62,10 +64,13 @@ Primero separar e imputar los datos de sustrato y los fisicoquimicos por aparte.
 
 ```{r}
 
-df1 <- select(channel_1, Elevacion, Ancho, Velocidad, Rocas, Canto, grava, arena, Limo)
-df1
+# df0 <- channel_1[, 6:13]
+# df0
 
-df1a <- imputePCA(df1,ncp=4, scale = TRUE, method = c("Regularized","EM"), 
+df1 <- select(channel_1, Elevacion, Ancho, Velocidad, Rocas, Canto, grava, arena, Limo)
+
+
+df1a <- imputePCA(df1, ncp=4, scale = TRUE, method = c("Regularized","EM"), 
                       row.w = NULL, ind.sup=NULL,quanti.sup=NULL,quali.sup=NULL,
                       coeff.ridge = 1, threshold = 1e-06, seed = NULL, nb.init = 1,  
                       maxiter = 1000)
@@ -104,8 +109,9 @@ new_channel2 <- select(new_channel,
 
 ```{r}
 
-channel.pca <- prcomp(new_channel2, center = TRUE, scale = TRUE)
+channel.pca <- prcomp(new_channel2, center = TRUE, scale =TRUE)
 summary(channel.pca)
+
 
 ```
 
@@ -136,7 +142,28 @@ ggbiplot(channel.pca, labels=rownames(channel$Forma))
 
 ```
 
-3.2 Ver graficamente lo que explica cada axis.
+
+3.2 Vamos a ver la contribucion de cada una de las variables. 
+
+
+```{r}
+
+variance <- (channel.pca$sdev)^2
+
+# Cargar los loadings
+loadings <- channel.pca$rotation
+round(loadings, 2)[ , 1:3]
+
+print(channel.pca)
+
+rownames(loadings) <- colnames(new_channel2)
+scores <- channel.pca$x 
+
+
+```
+
+
+3.3 Ver graficamente lo que explica cada axis.
 
 ```{r}
 
@@ -144,20 +171,14 @@ layout(matrix(1:2, ncol=2))
 screeplot(channel.pca)
 screeplot(channel.pca, type="lines")
 
-```
 
-
-3.3 Vamos a ver la contribucion de cada una de las variables. 
-Usamos otra libreria. factoextra
-
-```{r}
-
-get_eigenvalue(channel.pca)
-res.var <- get_pca_var(channel.pca)
-res.var$contrib        # Contributions to the PCs
-res.var$coord          # Coordinates
+varPercent <- variance/sum(variance) * 100
+barplot(varPercent, xlab='PC', ylab='Percent Variance',
+names.arg=1:length(varPercent), las=1, col='gray') +
+abline(h=1/ncol(new_channel2)*100, col="red")
 
 ```
+
 
 
 4  Otras formas de visualizar los datos.
@@ -173,6 +194,7 @@ fviz_pca_biplot(channel.pca, repel = TRUE,
 
 ```
 
+
 4.1 Con las elipses.
 
 ```{r}
@@ -182,7 +204,8 @@ fviz_pca_ind(channel.pca, label="none", habillage=channel$Forma,
 
 ```
 
-4.1 
+
+4.2 
 ```{r}
 fviz_pca_biplot(channel.pca, label = "var", habillage=channel$Forma,
                addEllipses=TRUE, ellipse.level=0.95,
@@ -202,5 +225,10 @@ ggplot(data, aes(x=PC1,y=PC2)) +
   geom_point(size = 2, aes(color=Forma))
 
 
+```
 
+
+6. Otras enlaces de interes.
+```{r}
+# http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/118-principal-component-analysis-in-r-prcomp-vs-# princomp/
 ```
