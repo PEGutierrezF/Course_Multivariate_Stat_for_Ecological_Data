@@ -73,9 +73,9 @@ df1a <- imputePCA(df1,ncp=4, scale = TRUE, method = c("Regularized","EM"),
 
 df2 <- select(channel_1, Elevacion, NAN_Am, NAtemp, NASatO2, nit, NADBO)
 df2a <- imputePCA(df2, ncp=4, scale = TRUE, method = c("Regularized","EM"), 
-                      row.w = NULL, ind.sup=NULL,quanti.sup=NULL,quali.sup=NULL,
-                      coeff.ridge = 1, threshold = 1e-06, seed = NULL, nb.init = 1,  
-                      maxiter = 1000)
+                   row.w = NULL, ind.sup=NULL,quanti.sup=NULL,quali.sup=NULL,
+                   coeff.ridge = 1, threshold = 1e-06, seed = NULL, nb.init = 1,  
+                   maxiter = 1000)
 
 ```
 
@@ -88,13 +88,13 @@ df2b <- as.data.frame(df2a) # Physicochemical
 
 
 new_channel <- do.call("merge", c(lapply(list(df1b, df2b), data.frame, row.names=NULL), 
-  by = 0, all = TRUE, sort = FALSE))[-1]
+by = 0, all = TRUE, sort = FALSE))[-1]
 
 new_channel2 <- select(new_channel,
-                       completeObs.Elevacion.x, completeObs.Ancho, completeObs.Velocidad,
-                       completeObs.Rocas, completeObs.Canto, completeObs.grava, completeObs.arena,
-                       completeObs.Limo, completeObs.NAN_Am, completeObs.NAtemp, completeObs.NASatO2,
-                       )
+                      completeObs.Elevacion.x, completeObs.Ancho, completeObs.Velocidad,
+                     completeObs.Rocas, completeObs.Canto, completeObs.grava, completeObs.arena,
+                    completeObs.Limo, completeObs.NAtemp, completeObs.NASatO2,
+                      )
               
 ```
 
