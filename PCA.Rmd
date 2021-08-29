@@ -109,7 +109,7 @@ new_channel2 <- select(new_channel,
 
 ```{r}
 
-channel.pca <- prcomp(channel_1, center = TRUE, scale =TRUE)
+channel.pca <- prcomp(new_channel2, center = TRUE, scale =TRUE)
 summary(channel.pca)
 
 
