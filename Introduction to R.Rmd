@@ -5,3 +5,48 @@ date: "8/28/2021"
 output: pdf_document
 ---
 
+What is R?
+Is a computer language that allows the user to program algorithms and use tools that have been programmed by others. 
+
+R is based on the computer language S, which was developed by John Chambers and others at Bell Laboratories in 1976. In the early 1990s, Ross
+Ihaka and Robert Gentleman (University of Auckland, in Auckland, New Zealand) experimented with the language and called their product R. Note
+that both their first names begin with the letter R. Also when modifying a
+language called S, it is tempting to call it T or R.
+
+R comes with a series of default packages. A package is a collection of previously programmed functions, often including functions for specific tasks. It is tempting to call this a library, but the R community refers to it as a package.
+
+" > " Significa "What now?"
+The screen prompt > is an invitation to put R to work.
+Each line can have at most 128 characters,   When continuation is expected, the prompt changes from > to +
+Note that the + continuation prompt does not carry out arithmetic plus.
+
+1.  Primer paso para comenzar a trabakar en R es instalar y llamar las librerias con las que vamos a trabajar.  
+En cualquier momento se pueden llamar, pero si las pones arriba sera mejor visualizarlas luego.  
+
+```{r}
+# install.packages("Kendall")
+
+library(Kendall)
+
+citation('Kendall')
+```
+
+1.1  Si necesitas ayuda de como trabaja una funcion en R puedes usar "  ? "
+
+```{r}
+
+?lm
+
+```
+
+
+2 Si comienzas un analisis nuevo.  Recomiendo limpiar en "Environment".
+
+```{r}
+
+# rm(list = ls(all = TRUE))
+
+```
+
+
+
