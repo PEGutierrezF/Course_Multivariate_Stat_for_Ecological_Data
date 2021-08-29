@@ -29,18 +29,19 @@ En cualquier momento se pueden llamar, pero si las pones arriba sera mejor visua
 library(Kendall)
 
 citation('Kendall')
+
 ```
 
 1.1  Si necesitas ayuda de como trabaja una funcion en R puedes usar "  ? "
 
 ```{r}
 
-?lm
+# ?lm
 
 ```
 
 
-2 Si comienzas un analisis nuevo.  Recomiendo limpiar en "Environment".
+2. Si comienzas un analisis nuevo.  Recomiendo limpiar en "Environment".
 
 ```{r}
 
@@ -49,4 +50,36 @@ citation('Kendall')
 ```
 
 
+3. Hay que definir el directorio donde estas trabajando.
+A no ser que estes en un proyecto en Github donde la documentacion (scripts, RMarkdown) y las tablas estan juntas.
 
+```{r}
+
+# setwd('D:/Curriculum/14_ Colaboracion/2021 Pulse LTER/Pulse WG PR/PulseDynWorkingGroup_Luq/data')
+
+```
+
+
+4. Importar tablas a R.  Hay varias maneras.
+
+```{r}
+
+# xxx.frm=read.table("xxx.txt",header=T)
+# attach(xxx.frm)
+#xxx.frm
+
+
+# xxx.frm=read.csv("xxx.csv")
+# attach(xxx.frm)
+# xxx.frm
+
+
+```
+
+4.1 Se puede importar tablas seleccionandalas directamente
+
+```{r}
+
+# data<-read.table(file.choose(),header=T)
+
+```
