@@ -1,0 +1,7 @@
+---
+title: "An Introduction to R"
+author: "Pablo E. Gutiérrez-Fonseca"
+date: "8/28/2021"
+output: pdf_document
+---
+

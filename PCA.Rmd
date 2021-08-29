@@ -98,7 +98,7 @@ by = 0, all = TRUE, sort = FALSE))[-1]
 new_channel2 <- select(new_channel,
                       completeObs.Elevacion.x, completeObs.Ancho, completeObs.Velocidad,
                      completeObs.Rocas, completeObs.Canto, completeObs.grava, completeObs.arena,
-                    completeObs.Limo, completeObs.NAtemp, completeObs.NASatO2,
+                    completeObs.Limo, completeObs.NAtemp, completeObs.NASatO2
                       )
               
 ```
@@ -109,7 +109,7 @@ new_channel2 <- select(new_channel,
 
 ```{r}
 
-channel.pca <- prcomp(new_channel2, center = TRUE, scale =TRUE)
+channel.pca <- prcomp(channel_1, center = TRUE, scale =TRUE)
 summary(channel.pca)
 
 
