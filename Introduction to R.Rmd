@@ -20,13 +20,14 @@ The screen prompt > is an invitation to put R to work.
 Each line can have at most 128 characters,   When continuation is expected, the prompt changes from > to +
 Note that the + continuation prompt does not carry out arithmetic plus.
 
-1.  Primer paso para comenzar a trabakar en R es instalar y llamar las librerias con las que vamos a trabajar.  
+1.  Primer paso para comenzar a trabajar en R es instalar y llamar las librerias con las que vamos a trabajar.  
 En cualquier momento se pueden llamar, pero si las pones arriba sera mejor visualizarlas luego.  
 
 ```{r}
 # install.packages("Kendall")
 
 library(Kendall)
+library(tibble)
 
 citation('Kendall')
 
@@ -81,5 +82,54 @@ A no ser que estes en un proyecto en Github donde la documentacion (scripts, RMa
 ```{r}
 
 # data<-read.table(file.choose(),header=T)
+
+```
+
+
+5. Construccion de tablas en R.
+
+Usando data.frame
+
+```{r}
+    example<- data.frame(Day=c(2,4,8,16,32,44,2,4,8,16,32,44,2,4,8,16,32,44),
+          Replicate=c(1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,
+                      1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,
+                      1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3),
+          Treament=c("CC","CC","CC","CC","CC","CC","CC","CC","CC","CC","CC","CC","CC","CC","CC","CC","CC","CC",
+                     "HP","HP","HP","HP","HP","HP","HP","HP","HP","HP","HP","HP","HP","HP","HP","HP","HP","HP",
+                     "LL","LL","LL","LL","LL","LL","LL","LL","LL","LL","LL","LL","LL","LL","LL","LL","LL","LL"),
+          AFDM=c(94.669342,94.465752,84.897023,81.435993,86.556221,75.328294,94.262162,88.791240,75.735474,81.232403,
+                 67.050593,76.346244,95.076522,88.968823,83.879073,73.958836,70.645724,67.184695,99.763156,92.022673,
+                 92.245362,74.513934,50.083136,36.979418,94.872932,86.353037,81.843173,67.795465,46.622106,18.323099,
+                 95.089932,93.244212,81.679814,65.352385,18.286525,7.517794,99.559972,86.759404,84.693433,79.196504,
+                 67.456961,54.765706,94.074014,87.543693,82.492548,72.333367,51.304676,51.304676,98.340870,86.322153,
+                 87.950873,84.693433,63.316485,63.723665))
+
+example
+
+
+```
+
+ 6.1 Usando tribble
+ 
+```{r}
+
+ data <- tibble(
+  x = 1:5, 
+  y = 1, 
+  z = x ^ 2 + y
+)
+                 
+data
+                 
+```
+
+
+7. Simbolos comunes en r, que vamos a estar usando.
+
+```{r, eval = FALSE}
+%>% dplyr. What the function does is to pass the left hand side of the operator to the first argument of the right hand side of the operator.
+  
+$ allows you extract elements by name from a named list. For example
 
 ```
