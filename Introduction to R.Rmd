@@ -21,7 +21,8 @@ Each line can have at most 128 characters,   When continuation is expected, the 
 Note that the + continuation prompt does not carry out arithmetic plus.
 
 1.  Primer paso para comenzar a trabajar en R es instalar y llamar las librerias con las que vamos a trabajar.  
-En cualquier momento se pueden llamar, pero si las pones arriba sera mejor visualizarlas luego.  
+En cualquier momento se pueden llamar, pero si las pones arriba sera mejor visualizarlas luego. 
+
 
 ```{r}
 # install.packages("Kendall")
