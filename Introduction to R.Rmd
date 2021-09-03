@@ -25,7 +25,7 @@ En cualquier momento se pueden llamar, pero si las pones arriba sera mejor visua
 
 
 ```{r}
-# install.packages("Kendall")
+ install.packages("Kendall")
 
 library(Kendall)
 library(tibble)
@@ -82,7 +82,8 @@ A no ser que estes en un proyecto en Github donde la documentacion (scripts, RMa
 
 ```{r}
 
-# data<-read.table(file.choose(),header=T)
+ data<-read.table(file.choose(),header=T)
+
 
 ```
 
@@ -134,3 +135,4 @@ data
 $ allows you extract elements by name from a named list. For example
 
 ```
+

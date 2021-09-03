@@ -32,8 +32,8 @@ library(ggbiplot)
 
 ```{r}
 channel <- read.csv("data/channel_form.csv", header=TRUE)
-#head(channel)
-
+head(channel)
+tail(channel)
 ```
 
 
