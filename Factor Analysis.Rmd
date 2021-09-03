@@ -1,0 +1,50 @@
+---
+title: "Factor Analysis"
+author: "Pablo E. Gutiérrez-Fonseca"
+date: "9/3/2021"
+output: html_document
+---
+
+```{r}
+
+library(nFactors)
+library(foreign)
+library(Hmisc)
+library(corrplot)
+library(psych)
+
+ev1 = eigen(cor(new_channel2)) # eigenvalues
+ev1$values
+
+raices=ev1$values
+raicesPorc = round((raices/sum(raices))*100,2)
+raicesPorc
+
+library(nFactors)
+
+fit <- factanal(new_channel2, 4, rotation="none") # #SIEMPRE SE RECHAZÓ LA HIPOTESIS ENTONCES NO FUNCIONÓ
+fit 
+
+#CAMBIAMOS DE 1 HASTA 4 PARA VER LOS RESULTADOS 
+
+#1 FACTOR
+f.solution <- fa(new_channel2, nfactors=1, rotate="oblimin", fm="wls")
+fa.diagram(f.solution)
+
+#2 FACTOR
+f.solution <- fa(new_channel2, nfactors=2, rotate="oblimin", fm="wls")
+fa.diagram(f.solution)
+print(f.solution)
+
+#3 FACTOR
+f.solution <- fa(new_channel2, nfactors=3, rotate="oblimin", fm="wls")
+fa.diagram(f.solution)
+
+#4 FACTOR
+f.solution <- fa(new_channel2, nfactors=4, rotate="oblimin", fm="wls")
+fa.diagram(f.solution)
+
+confirmatorio, comprobar la existencia de esas dos factores, uno con el satO2 y OD y el otro con los demás 
+
+```
+
