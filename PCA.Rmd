@@ -45,7 +45,7 @@ summary(channel)
 ```
 
 
-2.1 Remover la(s) variable(s) que tiene(n) mucho(s) NAs y las Etiquetas (a la funcion lo le gusta), luego las agregamos.
+2.1 Remover la(s) variable(s) que tiene(n) mucho NAs y las Etiquetas (a la funcion lo le gusta), luego las agregamos.
 
 ```{r}
 
