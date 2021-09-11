@@ -21,8 +21,17 @@ library(psych)
 Esto se conoce como la regla de Kaiser.
 
 ```{r}
+
 ev1 = eigen(cor(new_channel2)) 
 ev1$values
+
+
+#2. variabilidad explicada por cada factor individual, la cual debe de superar el 10%, en este caso, se indican 5 factores 
+raices=ev1$values
+raicesPorc = round((raices/sum(raices))*100,2)
+raicesPorc
+
+
 ```
 Identificamos 4 factores con eigen >1.
 
@@ -60,6 +69,8 @@ fa.diagram(f.solution)
 #4 FACTOR
 f.solution <- fa(new_channel2, nfactors=4, rotate="oblimin", fm="wls")
 fa.diagram(f.solution)
+
+
 
 ```
 

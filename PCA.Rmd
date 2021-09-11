@@ -207,9 +207,12 @@ fviz_pca_ind(channel.pca, label="none", habillage=channel$Forma,
 
 4.2 
 ```{r}
-fviz_pca_biplot(channel.pca, label = "var", habillage=channel$Forma,
+PCA <- fviz_pca_biplot(channel.pca, label = "var", habillage=channel$Forma,
                addEllipses=TRUE, ellipse.level=0.95,
                ggtheme = theme_minimal())
+
+PCA + ggsave("PCA.jpg", width=11, height=8.5)
+
 ```
 
 
