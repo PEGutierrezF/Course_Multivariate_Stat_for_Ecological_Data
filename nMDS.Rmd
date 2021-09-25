@@ -32,20 +32,24 @@ nrow(moth_sp)
 Paso 3.  Vamos hacer el nMDS
 
 ```{r}
-set.seed(1)
+set.seed(1) # Con este comando, siempre comenzara del mismo lugar.
 
 moth.mds <- metaMDS(moth_sp, distance = "bray", k = 2, trymax=100)  #using all the defaults
 moth.mds
 
 ```
-Paso 4.  Vamos hacer el grafico.
+
+Paso 4.  Vamos hacer el grafico. Un muy sensillo Plot
 
 ```{r}
+
 plot(moth.mds, type="t")
 
 ```
 
-Paso 4.  Vamos a poner separarlo por Habitat, Site y Periodo
+
+Paso 5.  Vamos a poner Habitat, Site y Periodo en el grafico. 
+Primer las busco en la Matrix Orignal 
 
 ```{r}
 Habitat <- select(Moth_full, Habitat)
@@ -53,3 +57,61 @@ Site <- select(Moth_full, Site)
 Period <- select(Moth_full, Period)
 
 ```
+
+Paso 6.  Extraer las cordenadas de los Axis del nmds.
+
+```{r}
+
+data.scores <- as.data.frame(scores(moth.mds))  #Using the scores function from vegan to extract the site scores and convert to a data.frame
+data.scores
+
+```
+
+Paso 7.  Unir los datos de Habitat, Site y Periodo a mi nueva dataframe (i.e., data.scores)
+
+```{r}
+
+data.scores$Site <- unlist(Site)  #   create a column of site names
+data.scores$Period <- unlist(Period)  
+data.scores$Habitat <- unlist(Habitat)
+head(data.scores) #look at the data
+
+species.scores <- as.data.frame(scores(moth.mds, "species"))
+species.scores$species <- rownames(species.scores)  # create a column of species, from the rownames of species.scores
+```
+
+```{r}
+
+####### nMDS Graphs ######
+
+p <- ggplot() + 
+  geom_text(data=species.scores,aes(x=NMDS1,y=NMDS2, label = "*"),size=7, alpha=0.5) # add the species labels
+p
+
+p1 <- p + geom_point(data=data.scores,aes(x=NMDS1,y=NMDS2,
+                                          shape=Period,colour=Habitat),size=5) + # add the point markers
+        scale_color_manual(values=c("#00AFBB", "#FC4E07")) + 
+        scale_shape_manual(values=c(15, 17))
+p1  
+
+p2 <- p1 + geom_text(data=data.scores,aes(x=NMDS1,y=NMDS2,label=""),size=6,vjust=0)  # add the site labels
+p2  
+
+p3 <- p2 + coord_equal() +
+  theme_bw() + 
+  theme(legend.title = element_text(size=12),
+        axis.text.x = element_blank(),  # remove x-axis text
+        axis.text.y = element_blank(), # remove y-axis text
+        axis.ticks = element_blank(),  # remove axis ticks
+        axis.title.x = element_text(size=16), # remove x-axis labels
+        axis.title.y = element_text(size=16), # remove y-axis labels
+        panel.background = element_blank(), 
+        panel.grid.major = element_blank(),  #remove major-grid labels
+        panel.grid.minor = element_blank(),  #remove minor-grid labels
+        plot.background = element_blank()) + 
+  guides(color = guide_legend(override.aes = list(shape = 16, size = 4)))
+p3
+
+```
+
+
