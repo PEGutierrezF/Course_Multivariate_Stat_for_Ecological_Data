@@ -1,0 +1,55 @@
+---
+title: "nMDS"
+author: "Pablo E. Gutiérrez-Fonseca"
+date: "9/25/2021"
+output: pdf_document
+---
+
+```{r, warning=FALSE,message=FALSE}
+
+libraries <- c("vegan", "ggplot2", "dplyr")
+lapply(libraries, require, character.only = TRUE)
+
+```
+
+Paso 1. LLamar a la tabla (como .csv)
+
+```{r, results='hide'}
+Moth_full  <- read.csv("data/fullmatrix.csv")
+head(Moth_full)
+
+```
+
+Paso 2.  Seleccionar las especies.
+
+```{r, results='hide'}
+moth_sp <- select(Moth_full, M1:A248)
+str(moth_sp)
+ncol(moth_sp)
+nrow(moth_sp)
+
+```
+Paso 3.  Vamos hacer el nMDS
+
+```{r}
+set.seed(1)
+
+moth.mds <- metaMDS(moth_sp, distance = "bray", k = 2, trymax=100)  #using all the defaults
+moth.mds
+
+```
+Paso 4.  Vamos hacer el grafico.
+
+```{r}
+plot(moth.mds, type="t")
+
+```
+
+Paso 4.  Vamos a poner separarlo por Habitat, Site y Periodo
+
+```{r}
+Habitat <- select(Moth_full, Habitat)
+Site <- select(Moth_full, Site)
+Period <- select(Moth_full, Period)
+
+```
