@@ -31,6 +31,15 @@ nrow(moth_sp)
 ```
 Paso 3.  Vamos hacer el nMDS
 
+As a rule of thumb literature has identified the following cut-off values for stress-level:
+
+Higher than 0.2 is poor (risks for false interpretation).
+0.1 - 0.2 is fair (some distances can be misleading for interpretation).
+0.05 - 0.1 is good (can be confident in inferences from plot).
+Less than 0.05 is excellent (this can be rare).
+
+An important number to note is the stress, which is roughly the “goodness of fit” of your NMDS ordination. For a good representation of your data, the stress value should ideally be less than 0.2. 
+
 ```{r}
 set.seed(1) # Con este comando, siempre comenzara del mismo lugar.
 
@@ -38,6 +47,7 @@ moth.mds <- metaMDS(moth_sp, distance = "bray", k = 2, trymax=100)  #using all t
 moth.mds
 
 ```
+
 
 Paso 4.  Vamos hacer el grafico. Un muy sensillo Plot
 
@@ -48,7 +58,32 @@ plot(moth.mds, type="t")
 ```
 
 
-Paso 5.  Vamos a poner Habitat, Site y Periodo en el grafico. 
+Paso 5. Mirar el stressplot
+Large scatter around the line suggests that original dissimilarities are not well preserved in the reduced number of dimensions. Looks pretty good in this case.
+
+```{r}
+
+stressplot(moth.mds)
+
+```
+
+
+Paso 6.  Otra metrica para evaluar el ajuste (buen desempeno) del nMDS es mirar el "Goodness of fit".
+
+Visitar esta pagina para mas informacion:
+https://rdrr.io/rforge/vegan/man/goodness.metaMDS.html
+
+```{r}
+gof <- goodness(moth.mds)
+gof
+
+{plot (moth.mds, display = 'sites', type = 't', main = 'Goodness of fit') # this function draws NMDS ordination diagram with sites
+points (moth.mds, display = 'sites', cex = 2*gof/mean(gof))} # and this adds the points with size reflecting goodness of fit (bigger = worse fit)
+
+```
+
+
+Paso 7.  Vamos a poner Habitat, Site y Periodo en el grafico. 
 Primer las busco en la Matrix Orignal 
 
 ```{r}
@@ -58,7 +93,7 @@ Period <- select(Moth_full, Period)
 
 ```
 
-Paso 6.  Extraer las cordenadas de los Axis del nmds.
+Paso 8.  Extraer las cordenadas de los Axis del nmds.
 
 ```{r}
 
@@ -67,7 +102,7 @@ data.scores
 
 ```
 
-Paso 7.  Unir los datos de Habitat, Site y Periodo a mi nueva dataframe (i.e., data.scores)
+Paso 9.  Unir los datos de Habitat, Site y Periodo a mi nueva dataframe (i.e., data.scores)
 
 ```{r}
 
@@ -75,29 +110,54 @@ data.scores$Site <- unlist(Site)  #   create a column of site names
 data.scores$Period <- unlist(Period)  
 data.scores$Habitat <- unlist(Habitat)
 head(data.scores) #look at the data
+```
 
+Paso 10.  Extraer las cordenadas de las especies y ponerlas en una nueva matrix.
+
+```{r}
 species.scores <- as.data.frame(scores(moth.mds, "species"))
 species.scores$species <- rownames(species.scores)  # create a column of species, from the rownames of species.scores
+
 ```
+
+
+Paso 11.  Vamos hacer graficos bonitos en ggplot2.
+Solo Especies.
+
 
 ```{r}
 
-####### nMDS Graphs ######
-
 p <- ggplot() + 
-  geom_text(data=species.scores,aes(x=NMDS1,y=NMDS2, label = "*"),size=7, alpha=0.5) # add the species labels
+  geom_text(data=species.scores, aes(x=NMDS1,y=NMDS2, label = "*"),size=7, alpha=0.5) # add the species labels
+
 p
 
+```
+
+Paso 12.  Vamos a poner etiquetas. En este caso solo Habitats y Periordo
+
+```{r}
 p1 <- p + geom_point(data=data.scores,aes(x=NMDS1,y=NMDS2,
                                           shape=Period,colour=Habitat),size=5) + # add the point markers
         scale_color_manual(values=c("#00AFBB", "#FC4E07")) + 
         scale_shape_manual(values=c(15, 17))
-p1  
+p1 
 
+```
+
+Paso 13.  Agrerar sitios.
+
+```{r}
 p2 <- p1 + geom_text(data=data.scores,aes(x=NMDS1,y=NMDS2,label=""),size=6,vjust=0)  # add the site labels
-p2  
+p2 
 
-p3 <- p2 + coord_equal() +
+```
+
+
+Paso 14.  Graficos de Publicacion.
+
+```{r}
+p3 <- p1 + coord_equal() +
   theme_bw() + 
   theme(legend.title = element_text(size=12),
         axis.text.x = element_blank(),  # remove x-axis text
@@ -113,5 +173,6 @@ p3 <- p2 + coord_equal() +
 p3
 
 ```
+
 
 
