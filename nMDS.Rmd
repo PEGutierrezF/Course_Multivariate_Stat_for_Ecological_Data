@@ -82,8 +82,38 @@ points (moth.mds, display = 'sites', cex = 2*gof/mean(gof))} # and this adds the
 
 ```
 
+Paso 7.  Chequear el % variacion explicado por cada Axis.
 
-Paso 7.  Vamos a poner Habitat, Site y Periodo en el grafico. 
+```{r}
+MDS <- cmdscale(vegdist(moth_sp, method = "bray"), k = 2, eig = T, add = T )
+round(MDS$eig*100/sum(MDS$eig),1)
+      
+```
+
+
+Paso 8.  Cuantas dimenciones neceita para reducir el stress.
+
+To decide how much dimensions you need you might plot the stress as a function of the number of dimensions. Note that, in contrast with a traditional scree plot, each bar does not represent the variance associated with each axis but the total stress (a function of the squared difference between d and d_hat) for all the dimensions. For example, the "3Dim" bar represent the stress of a solution in 3 dimensions, not the stress associated with the 3rd axis...
+Here the improvements of the representation for dimensions > than 2 dimensions are low.
+
+#  https://stackoverflow.com/questions/49223740/cumulative-variance-explained-for-nmds-in-r
+
+```{r}
+n = 10
+stress <- vector(length = n)
+for (i in 1:n) {
+    stress[i] <- metaMDS(moth_sp, distance = "bray", k = i)$stress
+}
+names(stress) <- paste0(1:n, "Dim")
+# x11(width = 10/2.54, height = 7/2.54)
+par(mar = c(3.5,3.5,1,1), mgp = c(2, 0.6, 0), cex = 0.8, las = 2)
+barplot(stress, ylab = "stress")
+
+```
+
+
+
+Paso 9.  Vamos a poner Habitat, Site y Periodo en el grafico. 
 Primer las busco en la Matrix Orignal 
 
 ```{r}
@@ -93,7 +123,7 @@ Period <- select(Moth_full, Period)
 
 ```
 
-Paso 8.  Extraer las cordenadas de los Axis del nmds.
+Paso 10.  Extraer las cordenadas de los Axis del nmds.
 
 ```{r}
 
@@ -102,7 +132,7 @@ data.scores
 
 ```
 
-Paso 9.  Unir los datos de Habitat, Site y Periodo a mi nueva dataframe (i.e., data.scores)
+Paso 11.  Unir los datos de Habitat, Site y Periodo a mi nueva dataframe (i.e., data.scores)
 
 ```{r}
 
@@ -112,7 +142,7 @@ data.scores$Habitat <- unlist(Habitat)
 head(data.scores) #look at the data
 ```
 
-Paso 10.  Extraer las cordenadas de las especies y ponerlas en una nueva matrix.
+Paso 12.  Extraer las cordenadas de las especies y ponerlas en una nueva matrix.
 
 ```{r}
 species.scores <- as.data.frame(scores(moth.mds, "species"))
@@ -121,7 +151,7 @@ species.scores$species <- rownames(species.scores)  # create a column of species
 ```
 
 
-Paso 11.  Vamos hacer graficos bonitos en ggplot2.
+Paso 13.  Vamos hacer graficos bonitos en ggplot2.
 Solo Especies.
 
 
@@ -134,7 +164,7 @@ p
 
 ```
 
-Paso 12.  Vamos a poner etiquetas. En este caso solo Habitats y Periordo
+Paso 14.  Vamos a poner etiquetas. En este caso solo Habitats y Periordo
 
 ```{r}
 p1 <- p + geom_point(data=data.scores,aes(x=NMDS1,y=NMDS2,
@@ -145,7 +175,7 @@ p1
 
 ```
 
-Paso 13.  Agrerar sitios.
+Paso 15.  Agrerar sitios.
 
 ```{r}
 p2 <- p1 + geom_text(data=data.scores,aes(x=NMDS1,y=NMDS2,label=""),size=6,vjust=0)  # add the site labels
@@ -154,7 +184,7 @@ p2
 ```
 
 
-Paso 14.  Graficos de Publicacion.
+Paso 16.  Graficos de Publicacion.
 
 ```{r}
 p3 <- p1 + coord_equal() +
