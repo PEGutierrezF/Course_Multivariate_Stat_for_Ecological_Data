@@ -10,7 +10,7 @@ output:
 1. Primer paso: cargar las librerias que necesitas.
 
 
-```{r, warning=FALSE,message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 
 library(ggplot2)
 library(dplyr)

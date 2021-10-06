@@ -1,0 +1,102 @@
+---
+title: "ANOSIM, PERMANOVA, SIMPER, Indicator Value"
+author: "Pablo E. Gutiérrez-Fonseca"
+date: "10/6/2021"
+output: pdf_document
+---
+
+
+```{r, warning=FALSE,message=FALSE}
+
+libraries <- c("vegan", "ggplot2", "dplyr")
+lapply(libraries, require, character.only = TRUE)
+
+```
+
+Paso 1. LLamar de nuevo a las tablas.
+
+```{r, results='hide'}
+
+Moth_full  <- read.csv("data/fullmatrix.csv")
+head(Moth_full)
+
+moth_sp <- select(Moth_full, M1:A248)
+
+```
+
+
+Paso 2.  Vamos a comparar entre grupos.
+Son los grupos propuestos (e identificados en el nMDS) significativamente diferente?
+Vamos hacer un ANOSIM
+
+```{r}
+################## ANOSIM ###################
+
+moth.dist <- vegdist(moth_sp,method="bray")
+moth.ano <- anosim(moth.dist, Moth_full$Period)
+summary(moth.ano)
+plot(moth.ano)
+
+```
+
+################ SIMPER ######################
+
+(sim <- with(Moth.frm, simper(moth, Hurricane)))
+summary(sim)
+
+(sim <- with(Moth.frm, simper(moth, Habitat)))
+summary(sim)
+
+
+################ Indicator Value ###############
+
+install.packages("labdsv")
+install.packages("indicspecies")
+library("indicspecies")
+library("labdsv")
+
+library(vegan)
+library(MASS)
+library(labdsv)
+library(cluster)
+library(indicspecies)
+
+ind_species<-multipatt(moth,Moth.frm$Hurricane,max.order=2,
+                       duleg=TRUE,func="IndVal.g",control=how(nperm=5000))
+ind_species
+summary(ind_species)
+
+
+
+# other things to do
+## Berger-Parker dominance
+## graficos de canopy cover
+
+
+
+# https://rpubs.com/Roeland-KINDT/694021
+
+install.packages("BiodiversityR")
+library(BiodiversityR)
+
+speciespreH <- select(Moth.frm, M1:A248)
+Period <- select(Moth.frm, Period)
+
+Accum.2 <- accumcomp(speciespreH, y=Period, factor='Period', 
+                     method='exact', conditioned=FALSE, plotit=FALSE)
+Accum.2
+
+accum.long1 <- accumcomp.long(Accum.2, ci=NA, label.freq=5)
+accum.long1
+
+plotgg1 <- ggplot(data=accum.long1, aes(x = Sites, y = Richness, ymax = UPR, ymin = LWR)) + 
+  scale_x_continuous(expand=c(0, 1), sec.axis = dup_axis(labels=NULL, name=NULL)) +
+  scale_y_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +
+  geom_line(aes(colour=Grouping), size=2) +
+  geom_point(data=subset(accum.long1, labelit==TRUE), 
+             aes(colour=Grouping, shape=Grouping), size=5) +
+  geom_ribbon(aes(colour=Grouping), alpha=0.2, show.legend=FALSE) + 
+  labs(x = "Month", y = "Species diversity", colour = "Period", shape = "Period")+
+  theme_classic()
+
+plotgg1
