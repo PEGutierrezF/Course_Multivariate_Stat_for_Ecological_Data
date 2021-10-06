@@ -82,6 +82,7 @@ points (moth.mds, display = 'sites', cex = 2*gof/mean(gof))} # and this adds the
 
 ```
 
+
 Paso 7.  Chequear el % variacion explicado por cada Axis.
 
 ```{r}

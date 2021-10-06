@@ -40,7 +40,24 @@ plot(moth.ano)
 
 ```
 
-Paso 3.  Camos a probar los grupos, pero ahora con un PERMANOVA.
+
+Paso 3.  Comprobar diferencias en los grupos. 
+
+```{r}
+dis_well <- betadisper(moth.dist, Moth_full$Period)
+permutest(dis_well)
+
+well.HSD <- TukeyHSD(dis_well)
+well.HSD 
+
+par(mfrow=c(1,2))
+plot(well.HSD, las=1)
+plot(dis_well, las=1)
+
+```
+
+
+Paso 4.  Vamos a probar los grupos, pero ahora con un PERMANOVA.
 
 ```{r}
 
@@ -48,8 +65,20 @@ adonis(moth_sp ~ Period, data = Moth_full, permutations = 999, method="bray")
 
 ```
 
+Paso 5. Comparasion entre grupos.
 
-Paso 4.  Vamos a ver quien cuales especies contribuyen a la disimilaridad entre esos grupos.
+```{r}
+library(devtools)
+install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis") 
+library(pairwiseAdonis)
+
+pair.mod<-pairwise.adonis(moth_sp,factors=Moth_full$Period)
+pair.mod
+
+```
+
+
+Paso 6.  Vamos a ver quien cuales especies contribuyen a la disimilaridad entre esos grupos.
 
 ```{r}
 ################ SIMPER ######################
@@ -63,7 +92,7 @@ summary(moth_simper, ordered = TRUE,
 
 
 
-Paso 5.  Vamos a determinar las especies que son indecadoras de cada periodo.
+Paso 7.  Vamos a determinar las especies que son indecadoras de cada periodo.
 
 max.order = 1 (which is equal to duleg=TRUE)  ->  singletons  #Unicas en un sitio
 max.order = 2 -> singletons and pairs  # Unicas y comparitdas
