@@ -23,7 +23,7 @@ head(Moth_full)
 Paso 2.  Seleccionar las especies.
 
 ```{r, results='hide'}
-moth_sp <- select(Moth_full, M1:A248)
+moth_sp <- dplyr::select(Moth_full, M1:A248)
 str(moth_sp)
 ncol(moth_sp)
 nrow(moth_sp)
