@@ -1,7 +1,25 @@
 
 
+
+
+# ---------------------------------------------
+# non Metric Multidimensional Scaling
+# 15 Oct 2021
+# Pablo E. Gutiérrez-Fonseca
+# pabloe.gutierrezfonseca@gmail.com
+# ---------------------------------------------
+#  
+
 libraries <- c("vegan", "ggplot2", "dplyr")
 lapply(libraries, require, character.only = TRUE)
+
+
+library(devtools)
+install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis") 
+library(pairwiseAdonis)
+
+
+
 
 laselva_full  <- read.csv("data/laSelva.csv")
 head(laselva_full)
@@ -45,13 +63,13 @@ data.scores$month <- unlist(month)
 
  
 grp.a <- data.scores[data.scores$month == "one", ][chull(data.scores[data.scores$month == 
-          "one", c("NMDS1", "NMDS2")]), ]  # hull values for grp A
+          "one", c("NMDS1", "NMDS2")]),]  # hull values for grp A
 grp.b <- data.scores[data.scores$month == "two", ][chull(data.scores[data.scores$month == 
-          "two", c("NMDS1", "NMDS2")]), ]  # hull values for grp A  
+          "two", c("NMDS1", "NMDS2")]),]  # hull values for grp A  
 grp.c <- data.scores[data.scores$month == "three", ][chull(data.scores[data.scores$month == 
-          "three", c("NMDS1", "NMDS2")]), ]  # hull values for grp A  
+          "three", c("NMDS1", "NMDS2")]),]  # hull values for grp A  
 grp.d <- data.scores[data.scores$month == "four", ][chull(data.scores[data.scores$month == 
-          "four", c("NMDS1", "NMDS2")]), ]  # hull values for grp A  
+          "four", c("NMDS1", "NMDS2")]),]  # hull values for grp A  
 
 hull.data <- rbind(grp.a, grp.b, grp.c, grp.d)
 
@@ -75,25 +93,25 @@ ggplot() +
         plot.background = element_blank())
 
 
+##############################################################################
 #Permanova
 adonis(laselva_sp ~ month, data = laselva_full, permutations = 999, method="bray")
 
-library(devtools)
-install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis") 
-library(pairwiseAdonis)
 
 pair.mod<-pairwise.adonis(laselva_sp,factors=laselva_full$month)
 pair.mod
 
 
+##############################################################################
 #Simper
 laselva_simper <- with(laselva_full, simper(laselva_sp, laselva_full$month), permutations = 999)
 summary(laselva_simper, ordered = TRUE,
         digits = max(3,getOption("digits") - 3))
 
 
+############################################################################
 # Indicator value
-ind_species<-multipatt(laselva_sp, laselva_full$month, max.order=1,
+ind_species<-multipatt(laselva_sp, laselva_full$month, max.order=3,
                        func="IndVal",control=how(nperm=999))
 summary(ind_species)
 
