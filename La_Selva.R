@@ -58,9 +58,10 @@ hull.data <- rbind(grp.a, grp.b, grp.c, grp.d)
 
 ggplot() + 
   geom_polygon(data=hull.data,aes(x=NMDS1,y=NMDS2,fill=month,group=month),alpha=0.30) + # add the convex hulls
-  geom_text(data=species.scores,aes(x=NMDS1,y=NMDS2,label=species),alpha=0.5) +  # add the species labels
+#  geom_text(data=species.scores,aes(x=NMDS1,y=NMDS2,label=species),alpha=0.5) +  # add the species labels
   geom_point(data=data.scores,aes(x=NMDS1,y=NMDS2,shape=month,colour=month),size=4) + # add the point markers
- # scale_colour_manual(values=c("A" = "red", "B" = "blue")) +
+#  scale_colour_manual(values=c("one" = "red", "two" = "blue",
+#                                "three"="black", "four"="green")) +
   coord_equal() +
   theme_bw() + 
   theme(axis.text.x = element_blank(),  # remove x-axis text
