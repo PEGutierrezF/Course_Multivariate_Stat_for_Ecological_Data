@@ -71,6 +71,35 @@ species_2 <- decostand(species_1, method = "hellinger")
 
 ```{r}
 rda_tree_all = vegan::rda(species_2 ~ temperature + pH +
-                 oxygen + conductivity + plants, data= env_1)
+                 oxygen + conductivity + plants, data= env_1, scale = TRUE)
+rda_tree_all
 ```
 
+7. Summary
+```{r}
+summary(rda_tree_all)
+
+head (summary (rda_tree_all))
+```
+
+8. Plots
+```{r}
+screeplot(rda_tree_all)
+```
+
+
+9. Ordination plots
+```{r}
+plot(rda_tree_all, scaling=1, main="Odonata in Urban ponds")
+spe.sc <- scores(rda_tree_all, choices=1:2, scaling=1, display="sp")
+arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
+```
+
+10. Calcular las R
+
+```{r}
+(R2 <- RsquareAdj(rda_tree_all)$r.squared)
+
+(R2adj <- RsquareAdj(rda_tree_all)$adj.r.squared)
+
+```
