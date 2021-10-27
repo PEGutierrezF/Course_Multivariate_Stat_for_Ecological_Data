@@ -55,9 +55,8 @@ env_1 <- select(env, -site)
 
 
 5.  Transformar datos.
-# Apply log+1 transformation to your species occurrences data (spe matrix) 
-# in order to correct for possible statistical errors associated to rare or very 
-#common species
+Hellinger es una transformacion recomendada por Legendre & Callagher (2001)
+en datos de abundancia y con una respuesta lineal
 
 ```{r}
 species_2 <- decostand(species_1, method = "hellinger")
@@ -71,11 +70,24 @@ species_2 <- decostand(species_1, method = "hellinger")
 
 ```{r}
 rda_tree_all = vegan::rda(species_2 ~ temperature + pH +
-                 oxygen + conductivity + plants, data= env_1, scale = TRUE)
+                 oxygen + conductivity + plants, data= env_1, scale=T)
 rda_tree_all
 ```
 
+
+
+
 7. Summary
+http://dmcglinn.github.io/quant_methods/lessons/multivariate_models.html
+
+Inertia is another name for variation or variance in this case. 
+“Total” refers to total variance
+“Constrained” refers to the amount of variance explained by the explanatory variables,
+“Unconstrained” refers to the residual variance. 
+Constrained + Unconstrained = Total.
+
+An R2 statistic can be derived simply as Constrained / Total.
+
 ```{r}
 summary(rda_tree_all)
 
@@ -85,6 +97,19 @@ head (summary (rda_tree_all))
 8. Plots
 ```{r}
 screeplot(rda_tree_all)
+
+```
+
+
+9. Percentage explained by constrained and unconstrained variables.
+
+```{r}
+constrained_eig <- rda_tree_all$CCA$eig/rda_tree_all$tot.chi*100
+unconstrained_eig <- rda_tree_all$CA$eig/rda_tree_all$tot.chi*100
+expl_var <- c(constrained_eig, unconstrained_eig)
+barplot (expl_var[1:20], col = c(rep ('red', length (constrained_eig)), rep ('black', length (unconstrained_eig))),
+         las = 2, ylab = '% variation')
+
 ```
 
 
@@ -102,4 +127,10 @@ arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
 
 (R2adj <- RsquareAdj(rda_tree_all)$adj.r.squared)
 
+```
+
+
+```{r}
+set.seed(1)
+anova.cca(rda_tree_all, by='axis', step=1000)
 ```
