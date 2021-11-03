@@ -8,7 +8,6 @@ output: pdf_document
 
 1. Primer paso: cargar las librerias que necesitas.
 
-
 ```{r, warning=FALSE, message=FALSE}
 
 library(ggplot2)
@@ -70,7 +69,6 @@ rda_tree_all = rda(species_2 ~ temperature + pH +
                  oxygen + conductivity + plants, data= env_1, scale=T)
 rda_tree_all
 ```
-
 
 
 
@@ -144,15 +142,12 @@ scaling 2 si nos interesa más ver cómo se relacionan las distintas variables.
 ```{r}
 par(mfrow=c(1,2))
 
-plot(rda_tree_all, scaling=1, main="Odonata in Urban ponds,, scaling=1")
-spe.sc <- scores(rda_tree_all, choices=1:2, scaling=1, display="sp")
-arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
+plot(rda_tree_all, scaling=1, main="Odonata in Urban ponds, scaling=1")
 
 plot(rda_tree_all, scaling=2, main="Odonata in Urban ponds, scaling=2")
-spe.sc <- scores(rda_tree_all, choices=1:2, scaling=1, display="sp")
-arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
 
 ```
+
 
 12. Calcular las R
 
