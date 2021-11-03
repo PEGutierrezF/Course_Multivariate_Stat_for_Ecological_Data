@@ -135,7 +135,8 @@ Scaling 1 (distance biplot): Se prioriza que la distancia entre objetos en el gr
 
 Scaling 2 (correlation biplot): Se prioriza que los ángulos entre vectores respeten la correlación original entre variables. La distancia entre objetos en el gráfico puede estar distorsionada.
 
-En resumen, utilizaremos scaling 1 si nos interesa más ver cómo se diferencian los objetos, y scaling 2 si nos interesa más ver cómo se relacionan las distintas variables.
+En resumen, utilizaremos scaling 1 si nos interesa más ver cómo se diferencian los objetos, y 
+scaling 2 si nos interesa más ver cómo se relacionan las distintas variables.
 
 # https://bookdown.org/stephi_gascon/bookdown-demo-master_-_multivariant/_book/ordination.html
 #https://fukamilab.github.io/BIO202/06-B-constrained-ordination.html
