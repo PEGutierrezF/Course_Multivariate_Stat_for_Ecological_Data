@@ -118,6 +118,7 @@ screeplot(rda_tree_all)
 
 10. Percentage explained by constrained and unconstrained variables.
 
+
 ```{r}
 constrained_eig <- rda_tree_all$CCA$eig/rda_tree_all$tot.chi*100
 unconstrained_eig <- rda_tree_all$CA$eig/rda_tree_all$tot.chi*100
@@ -129,10 +130,27 @@ barplot (expl_var[1:20], col = c(rep ('red', length (constrained_eig)), rep ('bl
 
 
 11. Ordination plots
+
+Scaling 1 (distance biplot): Se prioriza que la distancia entre objetos en el gráfico respete tanto como sea posible las distancias euclidias de la matriz original. Los ángulos entre vectores (variables) pueden ser distorsionados.
+
+Scaling 2 (correlation biplot): Se prioriza que los ángulos entre vectores respeten la correlación original entre variables. La distancia entre objetos en el gráfico puede estar distorsionada.
+
+En resumen, utilizaremos scaling 1 si nos interesa más ver cómo se diferencian los objetos, y scaling 2 si nos interesa más ver cómo se relacionan las distintas variables.
+
+# https://bookdown.org/stephi_gascon/bookdown-demo-master_-_multivariant/_book/ordination.html
+#https://fukamilab.github.io/BIO202/06-B-constrained-ordination.html
+
 ```{r}
-plot(rda_tree_all, scaling=1, main="Odonata in Urban ponds")
+par(mfrow=c(1,2))
+
+plot(rda_tree_all, scaling=1, main="Odonata in Urban ponds,, scaling=1")
 spe.sc <- scores(rda_tree_all, choices=1:2, scaling=1, display="sp")
 arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
+
+plot(rda_tree_all, scaling=2, main="Odonata in Urban ponds, scaling=2")
+spe.sc <- scores(rda_tree_all, choices=1:2, scaling=1, display="sp")
+arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
+
 ```
 
 12. Calcular las R
@@ -145,8 +163,18 @@ arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
 ```
 
 
+13a Testing the global significance of RDA
 
-13a Testing the significance of CCA axes (at least the first two or three should present a significant p value)
+```{r}
+set.seed(1)
+
+anova.cca(rda_tree_all, step=1000)
+
+```
+
+
+
+13b Testing the significance of CCA axes (at least the first two or three should present a significant p value)
 Hint Argument "step" gives the minimal number of permutations requested 
 to assess if the F value of a test is obviously significant or not
 
@@ -154,14 +182,19 @@ to assess if the F value of a test is obviously significant or not
 set.seed(1)
 
 anova.cca(rda_tree_all, by='axis', step=1000)
+
 ```
 
 
 
-13b Testing the significance of terms (environmental variables)
+13c Testing the significance of terms (environmental variables)
 Hint Argument "step" gives the minimal number of permutations requested 
 to assess if the F value of a test is obviously significant or not
 
 ```{r}
 anova.cca(rda_tree_all, by='terms', step=1000)
+
 ```
+
+
+
