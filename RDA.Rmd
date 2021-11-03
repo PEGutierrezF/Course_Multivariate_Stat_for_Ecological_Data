@@ -91,14 +91,32 @@ summary(rda_tree_all)
 head (summary (rda_tree_all))
 ```
 
-8. Plots
+
+8. Test for colinearity
+
+Then, we can calculate Variance Inflation Factors (VIF) for each of the constraints (variables) from the "env" matrix (environmental matrix). If we find an environmental variable with VIF>10, we'll know that this variable presents colinearity with another or other variables. In that case, we would have to delete the variable from our initial dataset and redo all the analysis. In our example, no variable is redundant with each other (all of them have VIF<10).
+
+Linear dependencies can be explored by computing the variables’ variance 
+inflation factors (VIF), which measure the proportion by which the variance of a 
+regression coefficient is inflated in the presence of other explanatory variables. 
+VIFs above 20 indicate strong collinearity. Ideally, VIFs above 10 should be at least 
+examined, and avoided if possible. VIFs can be computed in vegan after RDA 
+or CCA: (Bocard et al. page 175)
+
+```{r}
+vif.cca(rda_tree_all)
+
+```
+
+
+9. Plots
 ```{r}
 screeplot(rda_tree_all)
 
 ```
 
 
-9. Percentage explained by constrained and unconstrained variables.
+10. Percentage explained by constrained and unconstrained variables.
 
 ```{r}
 constrained_eig <- rda_tree_all$CCA$eig/rda_tree_all$tot.chi*100
@@ -110,14 +128,14 @@ barplot (expl_var[1:20], col = c(rep ('red', length (constrained_eig)), rep ('bl
 ```
 
 
-9. Ordination plots
+11. Ordination plots
 ```{r}
 plot(rda_tree_all, scaling=1, main="Odonata in Urban ponds")
 spe.sc <- scores(rda_tree_all, choices=1:2, scaling=1, display="sp")
 arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
 ```
 
-10. Calcular las R
+12. Calcular las R
 
 ```{r}
 (R2 <- RsquareAdj(rda_tree_all)$r.squared)
@@ -127,7 +145,23 @@ arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
 ```
 
 
+
+13a Testing the significance of CCA axes (at least the first two or three should present a significant p value)
+Hint Argument "step" gives the minimal number of permutations requested 
+to assess if the F value of a test is obviously significant or not
+
 ```{r}
 set.seed(1)
+
 anova.cca(rda_tree_all, by='axis', step=1000)
+```
+
+
+
+13b Testing the significance of terms (environmental variables)
+Hint Argument "step" gives the minimal number of permutations requested 
+to assess if the F value of a test is obviously significant or not
+
+```{r}
+anova.cca(rda_tree_all, by='terms', step=1000)
 ```
