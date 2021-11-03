@@ -11,13 +11,9 @@ output: pdf_document
 
 ```{r, warning=FALSE, message=FALSE}
 
-library(BiodiversityR)
-library(ggrepel)
 library(ggplot2)
-library(readxl)
-library(ggsci)
-library(ggforce)
 library(dplyr)
+library(vegan)
 
 ```
 
@@ -50,6 +46,7 @@ all.equal(rownames(species), rownames(env))
 ```{r}
 species_1 <- select(species, -site)
 env_1 <- select(env, -site)
+
 ```
 
 
@@ -69,7 +66,7 @@ species_2 <- decostand(species_1, method = "hellinger")
 # convert the factor to a dummy matrix
 
 ```{r}
-rda_tree_all = vegan::rda(species_2 ~ temperature + pH +
+rda_tree_all = rda(species_2 ~ temperature + pH +
                  oxygen + conductivity + plants, data= env_1, scale=T)
 rda_tree_all
 ```
