@@ -92,7 +92,7 @@ head (summary (rda_tree_all))
 
 8. Test for colinearity
 
-Then, we can calculate Variance Inflation Factors (VIF) for each of the constraints (variables) from the "env" matrix (environmental matrix). If we find an environmental variable with VIF>10, we'll know that this variable presents colinearity with another or other variables. In that case, we would have to delete the variable from our initial dataset and redo all the analysis. In our example, no variable is redundant with each other (all of them have VIF<10).
+Then, we can calculate Variance Inflation Factors (VIF) for each of the constraints (variables) from the environmental matrix. If we find an environmental variable with VIF>10, we'll know that this variable presents colinearity with another or other variables. In that case, we would have to delete the variable from our initial dataset and redo all the analysis. In our example, no variable is redundant with each other (all of them have VIF<10).
 
 Linear dependencies can be explored by computing the variables’ variance 
 inflation factors (VIF), which measure the proportion by which the variance of a 
@@ -163,7 +163,6 @@ plot(rda_tree_all, scaling=2, main="Odonata in Urban ponds, scaling=2")
 
 ```{r}
 set.seed(1)
-
 anova.cca(rda_tree_all, step=1000)
 
 ```
