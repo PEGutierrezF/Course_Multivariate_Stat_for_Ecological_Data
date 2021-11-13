@@ -55,6 +55,7 @@ Hellinger es una transformacion recomendada por Legendre & Callagher (2001)
 en datos de abundancia y con una respuesta lineal
 
 ```{r}
+
 species_2 <- decostand(species_1, method = "hellinger")
 
 ```
@@ -65,9 +66,11 @@ species_2 <- decostand(species_1, method = "hellinger")
 # convert the factor to a dummy matrix
 
 ```{r}
-rda_tree_all = rda(species_2 ~ temperature + pH +
-                 oxygen + conductivity + plants, data= env_1, scale=T)
+
+rda_tree_all = rda(species_2 ~ temperature + oxygen + pH +
+                conductivity + plants, data= env_1, scale=T)
 rda_tree_all
+
 ```
 
 
