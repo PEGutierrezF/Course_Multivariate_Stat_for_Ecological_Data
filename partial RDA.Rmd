@@ -28,7 +28,7 @@ env=read.csv("data/RDA_environmetal.csv", header=T, row.names=NULL, sep=",")
 ```
 
 
-4. Remover la columna de sitos.
+3. Remover la columna de sitos.
 ```{r}
 species_1 <- select(species, -site)
 env_1 <- select(env, -site)
@@ -36,27 +36,47 @@ env_1 <- select(env, -site)
 ```
 
 
-
+4. Vamos a construir los modelos: combinados e individuales
 
 ```{r}
-partial_rda_env = rda(species_2, env_1[,1:4], data= env_1, scale=T)
-partial_rda_phy = rda(species_2, env_1[,5:7], data= env_1, scale=T)
+partial_rda_all = rda(species_2~., data= env_1, scale=T)
+partial_rda_env = rda(species_2~ temperature + oxygen + pH + conductivity, 
+                      data= env_1, scale=T)
+partial_rda_phy = rda(species_2~ plants + land_use + margin, 
+                      data= env_1, scale=T)
 
 ```
 
+5. Ver los R2adj de cada uno
 
 ```{r}
+RsquareAdj (partial_rda_all)
 RsquareAdj (partial_rda_env)
 RsquareAdj(partial_rda_phy)
 
 ```
 
-
 ```{r}
-varp <- varpart(species_2, ~ temperature + oxygen + pH +
-                conductivity, ~ plants + land_use + margin, data = env_1)
+all <- RsquareAdj (partial_rda_all)$adj.r.squared
+env <- RsquareAdj (partial_rda_env)$adj.r.squared
+phy <- RsquareAdj (partial_rda_phy)$adj.r.squared
 
+b <- env + phy - all  # 0.02125216
+a <- env - b         # 0.03988225
+c <- phy - b         # 0.06750099
 
+a;b;c
+
+```
+
+<br/>
+
+6. Vamos a correr un RDA con las matrices (diferentes factores) separadas. 
+```{r}
+varp <- varpart(species_2, ~ temperature + oxygen + pH + conductivity, 
+                ~ plants + land_use + margin, data = env_1)
+
+varp
 ```
 
 
