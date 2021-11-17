@@ -1,0 +1,68 @@
+---
+title: "partial RDA"
+author: "Pablo E. Gutiérrez-Fonseca"
+date: "11/17/2021"
+output: html_document
+---
+
+
+1. Primer paso: cargar las librerias que necesitas.
+
+```{r, warning=FALSE, message=FALSE}
+
+library(ggplot2)
+library(dplyr)
+library(vegan)
+
+```
+
+
+
+2. Segundo paso: cargar los datos.
+
+```{r}
+
+species=read.csv("data/RDA_species.csv", header=T, row.names=NULL, sep=",")
+env=read.csv("data/RDA_environmetal.csv", header=T, row.names=NULL, sep=",")
+
+```
+
+
+4. Remover la columna de sitos.
+```{r}
+species_1 <- select(species, -site)
+env_1 <- select(env, -site)
+
+```
+
+
+
+
+```{r}
+partial_rda_env = rda(species_2, env_1[,1:4], data= env_1, scale=T)
+partial_rda_phy = rda(species_2, env_1[,5:6], data= env_1, scale=T)
+
+```
+
+
+```{r}
+RsquareAdj (partial_rda_env)
+RsquareAdj(partial_rda_phy)
+
+```
+
+
+```{r}
+varp <- varpart(species_2, ~ temperature + oxygen + pH +
+                conductivity, ~ plants + land_use, data = env_1)
+varp
+
+```
+
+
+```{r}
+
+plot (varp, digits = 2, Xnames = c('enviromental', 'physical'), bg = c('navy', 'tomato'))
+
+```
+

@@ -43,7 +43,7 @@ all.equal(rownames(species), rownames(env))
 
 4. Remover la columna de sitos.
 ```{r}
-species_1 <- select(species, -site)
+species_1 <- dplyr::select(species, -site)
 env_1 <- select(env, -site)
 
 ```
@@ -68,7 +68,7 @@ species_2 <- decostand(species_1, method = "hellinger")
 ```{r}
 
 rda_tree_all = rda(species_2 ~ temperature + oxygen + pH +
-                conductivity + plants, data= env_1, scale=T)
+                conductivity + plants + type +litoral, data= env_1, scale=T)
 rda_tree_all
 
 ```
