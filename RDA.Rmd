@@ -68,8 +68,8 @@ species_2 <- decostand(species_1, method = "hellinger")
 ```{r}
 
 rda_tree_all = rda(species_2 ~ temperature + oxygen + pH +
-                conductivity + plants + type +litoral, data= env_1, scale=T)
-rda_tree_all
+                conductivity , data= env_1, scale=T)
+head(summary(rda_tree_all))
 
 ```
 

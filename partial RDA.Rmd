@@ -40,7 +40,7 @@ env_1 <- select(env, -site)
 
 ```{r}
 partial_rda_env = rda(species_2, env_1[,1:4], data= env_1, scale=T)
-partial_rda_phy = rda(species_2, env_1[,5:6], data= env_1, scale=T)
+partial_rda_phy = rda(species_2, env_1[,5:7], data= env_1, scale=T)
 
 ```
 
@@ -54,15 +54,15 @@ RsquareAdj(partial_rda_phy)
 
 ```{r}
 varp <- varpart(species_2, ~ temperature + oxygen + pH +
-                conductivity, ~ plants + land_use, data = env_1)
-varp
+                conductivity, ~ plants + land_use + margin, data = env_1)
+
 
 ```
 
 
 ```{r}
 
-plot (varp, digits = 2, Xnames = c('enviromental', 'physical'), bg = c('navy', 'tomato'))
+plot (varp, digits = 2, Xnames = c('Enviromental factors', 'Plants'), bg = c('navy', 'tomato'))
 
 ```
 
