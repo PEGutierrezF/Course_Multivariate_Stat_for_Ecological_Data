@@ -2,131 +2,107 @@
 title: "partial RDA"
 author: "Pablo E. Gutiérrez-Fonseca"
 date: "11/17/2021"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
+<br/>
+<br/>
 
-
-1. Primer paso: cargar las librerias que necesitas.
-
+#### Primer paso: cargar las librerias que necesitas.
 ```{r, warning=FALSE, message=FALSE}
-
 library(ggplot2)
 library(dplyr)
 library(vegan)
-
-```
-
-
-
-2. Segundo paso: cargar los datos.
-
-```{r}
-
-species=read.csv("data/RDA_species.csv", header=T, row.names=NULL, sep=",")
-env=read.csv("data/RDA_environmetal_standart.csv", header=T, row.names=NULL, sep=",")
-
 ```
 
 <br/>
 
-3. Remover la columna de sitos.
+#### Segundo paso: cargar los datos.
+```{r}
+species=read.csv("data/RDA_species.csv", header=T, row.names=NULL, sep=",")
+env=read.csv("data/RDA_environmetal_standart.csv", header=T, row.names=NULL, sep=",")
+```
+
+<br/>
+
+#### Remover la columna de sitos.
 ```{r}
 species_1 <- select(species, -site)
 env_1 <- select(env, -site)
+```
+
+<br/>
+
+#### Transformar datos.
+Hellinger es una transformacion recomendada por Legendre & Callagher (2001)
+en datos de abundancia y con una respuesta lineal
+```{r}
+species.hel <- decostand(species_1, method = "hellinger")
+```
+
+
+#### Vamos a construir los modelos: combinados e individuales
+```{r}
+partial_rda_all = rda(species.hel ~., data= env_1, scale=F)
+partial_rda_env = rda(species.hel ~ temperature + oxygen + pH + conductivity, 
+                      data= env_1, scale=F)
+partial_rda_phy = rda(species.hel ~ plants + land_use + margin, 
+                      data= env_1, scale=F)
+partial_rda_season = rda(species.hel ~ season, data= env_1, scale=F)
 
 ```
 
 <br/>
 
-4.  Transformar datos.
-Hellinger es una transformacion recomendada por Legendre & Callagher (2001)
-en datos de abundancia y con una respuesta lineal
-```{r}
-
-species_2 <- decostand(species_1, method = "hellinger")
-
-```
-
-
-4. Vamos a construir los modelos: combinados e individuales
-```{r}
-partial_rda_all = rda(species_2 ~., data= env_1, scale=F)
-partial_rda_env = rda(species_2 ~ temperature + oxygen + pH + conductivity, 
-                      data= env_1, scale=F)
-partial_rda_phy = rda(species_2 ~ plants + land_use + margin, 
-                      data= env_1, scale=F)
-partial_rda_season = rda(species_2 ~ season, data= env_1, scale=F)
-
-```
-
-5. Ver los R2adj de cada uno
-
+#### Ver los R2adj de cada uno
 ```{r}
 RsquareAdj (partial_rda_all)
 RsquareAdj (partial_rda_env)
 RsquareAdj(partial_rda_phy)
 RsquareAdj(partial_rda_season)
-
-```
-
-
-```{r}
-all <- RsquareAdj (partial_rda_all)$adj.r.squared
-env <- RsquareAdj (partial_rda_env)$adj.r.squared
-phy <- RsquareAdj (partial_rda_phy)$adj.r.squared
-seas <- RsquareAdj(partial_rda_season)$adj.r.squared
-
-a <- env + phy + seas - all  # 0.02125216
-b <- env - a         # 0.03988225
-c <- phy - a         # 0.06750099
-d <- season - a         # 0.06750099
-
-a;b;c;d
-
 ```
 
 <br/>
 
-6. Vamos a correr un RDA con las matrices (diferentes factores) separadas. 
+#### Vamos a correr un RDA con las matrices (diferentes factores) separadas. 
 ```{r}
-varp <- varpart(species_2, ~ temperature + oxygen + pH + conductivity, 
+varp <- varpart(species.hel, ~ temperature + oxygen + pH + conductivity, 
                 ~ plants + land_use + margin, ~season, data = env_1)
-
 varp
 ```
+Legendre (2008) [doi: 10.1093/jpe/rtm001] argued that "Negative values of Ra2 are interpreted as zeros; they correspond to cases where the explanatory variables explain less variation than random normal variables would."
 
 
 <br/>
 
-Plot the results
+#### Plot the results
 The plot shows the adjusted R2 values associated with each partition or for overlapping partitions.
-
 ```{r}
-
 plot(varp, digits = 2, Xnames = c('Enviromental factors', 'Plants', "Season"), 
      bg = c('navy', 'tomato', "lightblue"))
 
 ## Show values for all partitions by putting 'cutoff' low enough:
-plot(varp, cutoff = -Inf, cex = 0.7, bg=2:5)
+#plot(varp, cutoff = -Inf, cex = 0.7, bg=2:5)
 ```
 
 <br/>
 
-Then we can test the significance of each individual component. 
+#### Then we can test the significance of each individual component. 
 ```{r}
 
 # significance of partition from Environment (physicochemical variables)
-anova(rda(species_2 ~ temperature + oxygen + pH + conductivity + 
+anova(rda(species.hel ~ temperature + oxygen + pH + conductivity + 
           Condition(plants + land_use + margin) +  
           Condition(season), data=env_1))
 
 # Significance of partition from Physical characteristics
-anova(rda(species_2 ~ plants + land_use + margin +
+anova(rda(species.hel ~ plants + land_use + margin +
           Condition(temperature + oxygen + pH + conductivity) +  
           Condition(season), data=env_1))
 
 # Significance of partition from Season
-anova(rda(species_2 ~ season +
+anova(rda(species.hel ~ season +
           Condition(plants + land_use + margin) +
           Condition(temperature + oxygen + pH + conductivity), 
           data=env_1))
