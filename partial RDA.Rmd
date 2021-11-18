@@ -41,27 +41,72 @@ en datos de abundancia y con una respuesta lineal
 species.hel <- decostand(species_1, method = "hellinger")
 ```
 
+<br/>
 
-#### Vamos a construir los modelos: combinados e individuales
+## Partial RDA
+Partial RDA is a special case of RDA in which the response variables Y are related to explanatory variables X in the presence of additional explanatory variables, W, called covariables.
+
+Partial RDA is thus a powerful tool when users what to assess the effect of environmental variables on species composition while taking into account the species variation due to other environmental variables with no interest. 
 ```{r}
-partial_rda_all = rda(species.hel ~., data= env_1, scale=F)
-partial_rda_env = rda(species.hel ~ temperature + oxygen + pH + conductivity, 
-                      data= env_1, scale=F)
-partial_rda_phy = rda(species.hel ~ plants + land_use + margin, 
-                      data= env_1, scale=F)
-partial_rda_season = rda(species.hel ~ season, data= env_1, scale=F)
+partial_rda <- rda(species.hel ~ temperature + oxygen + pH + conductivity+ 
+                 plants + land_use + margin +
+                Condition(season), data = env_1)
+                
+
+```
+
+#### Plot the results
+```{r}
+#Construct the triplots
+#Scaling 1
+
+plot(partial_rda, scaling=1, main="Triplot partial RDA - scaling 1", type="none", xlab=c("RDA1"), ylab=c("RDA2"), xlim=c(-1,1), ylim=c(-1,1))
+points(scores(partial_rda, display="sites", choices=c(1,2), scaling=1),
+       pch=21, col="black", bg="steelblue", cex=1.2)
+arrows(0,0,
+       scores(partial_rda, display="species", choices=c(1), scaling=1),
+       scores(partial_rda, display="species", choices=c(2), scaling=1),
+       col="black",length=0)
+text(scores(partial_rda, display="species", choices=c(1), scaling=1),
+     scores(partial_rda, display="species", choices=c(2), scaling=1),
+     labels=rownames(scores(partial_rda, display="species", scaling=1)),
+     col="black", cex=0.8)  
+arrows(0,0,
+      scores(partial_rda, display="bp", choices=c(1), scaling=1),
+      scores(partial_rda, display="bp", choices=c(2), scaling=1),
+      col="red")
+text(scores(partial_rda, display="bp", choices=c(1), scaling=1)+0.05,
+     scores(partial_rda, display="bp", choices=c(2), scaling=1)+0.05,
+     labels=rownames(scores(partial_rda, display="bp", choices=c(2), scaling=1)),
+     col="red", cex=1) 
+ 
+#Scaling 2
+plot(partial_rda, scaling=2, main="Triplot partial RDA - scaling 2", type="none", xlab=c("RDA1"), ylab=c("RDA2"), xlim=c(-1,1), ylim=c(-1,1))
+points(scores(partial_rda, display="sites", choices=c(1,2), scaling=2),
+       pch=21, col="black", bg="steelblue", cex=1.2)
+arrows(0,0,
+       scores(partial_rda, display="species", choices=c(1), scaling=2),
+       scores(partial_rda, display="species", choices=c(2), scaling=2),
+       col="black",length=0)
+text(scores(partial_rda, display="species", choices=c(1), scaling=2),
+     scores(partial_rda, display="species", choices=c(2), scaling=2),
+     labels=rownames(scores(partial_rda, display="species", scaling=2)),
+     col="black", cex=0.8)  
+arrows(0,0,
+       scores(partial_rda, display="bp", choices=c(1), scaling=2),
+       scores(partial_rda, display="bp", choices=c(2), scaling=2),
+       col="red")
+text(scores(partial_rda, display="bp", choices=c(1), scaling=2)+0.05,
+     scores(partial_rda, display="bp", choices=c(2), scaling=2)+0.05,
+     labels=rownames(scores(partial_rda, display="bp", choices=c(2), scaling=2)),
+     col="red", cex=1)  
 
 ```
 
 <br/>
 
-#### Ver los R2adj de cada uno
-```{r}
-RsquareAdj (partial_rda_all)
-RsquareAdj (partial_rda_env)
-RsquareAdj(partial_rda_phy)
-RsquareAdj(partial_rda_season)
-```
+## Variation partitioning by partial RDA
+Variation partitioning is a type of analysis that combines RDA and partial RDA to divide the variation of a response variable among two, three or four explanatory data sets. Variation partitioning are generally represented by Venn diagram in which the percentage of explained variance by each explanatory data set (or combination of data stets) is reported.
 
 <br/>
 
@@ -110,3 +155,7 @@ anova(rda(species.hel ~ season +
 ```
 
 Physicochemical and Physical characteriscs are all statistically significant in their contributions to Odonata community composition, even though the amount of variation explained by Physicochemistry is small. There was no statistically significant of season in Odonata composition independent of these other measured drivers.
+
+#### Referecens
+https://wiki.qcbs.ca/r_workshop10
+
