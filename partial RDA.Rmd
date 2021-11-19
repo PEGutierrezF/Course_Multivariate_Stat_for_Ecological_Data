@@ -44,16 +44,24 @@ species.hel <- decostand(species_1, method = "hellinger")
 <br/>
 
 ## Partial RDA
+Basic formula:  rda(Y ~ X + Condition(Z))
 Partial RDA is a special case of RDA in which the response variables Y are related to explanatory variables X in the presence of additional explanatory variables, W, called covariables.
 
 Partial RDA is thus a powerful tool when users what to assess the effect of environmental variables on species composition while taking into account the species variation due to other environmental variables with no interest. 
 ```{r}
-partial_rda <- rda(species.hel ~ temperature + oxygen + pH + conductivity+ 
+
+simple_rda <- rda(species.hel ~ temperature + oxygen + pH + conductivity + 
+                 plants + land_use + margin + season, data = env_1)
+
+partial_rda <- rda(species.hel ~ temperature + oxygen + pH + conductivity + 
                  plants + land_use + margin +
                 Condition(season), data = env_1)
                 
-
+# anova(partial_rda, permutations = how(nperm = 999))
 ```
+More information: Borcard et al (2012). page 172
+
+<br/>
 
 #### Plot the results
 ```{r}
@@ -113,7 +121,7 @@ Variation partitioning is a type of analysis that combines RDA and partial RDA t
 #### Vamos a correr un RDA con las matrices (diferentes factores) separadas. 
 ```{r}
 varp <- varpart(species.hel, ~ temperature + oxygen + pH + conductivity, 
-                ~ plants + land_use + margin, ~season, data = env_1)
+                ~plants + land_use + margin, ~season, data = env_1)
 varp
 ```
 Legendre (2008) [doi: 10.1093/jpe/rtm001] argued that "Negative values of Ra2 are interpreted as zeros; they correspond to cases where the explanatory variables explain less variation than random normal variables would."
@@ -124,8 +132,8 @@ Legendre (2008) [doi: 10.1093/jpe/rtm001] argued that "Negative values of Ra2 ar
 #### Plot the results
 The plot shows the adjusted R2 values associated with each partition or for overlapping partitions.
 ```{r}
-plot(varp, digits = 2, Xnames = c('Enviromental factors', 'Plants', "Season"), 
-     bg = c('navy', 'tomato', "lightblue"))
+plot(varp, digits = 2, Xnames = c('Enviromental factors', 'Vegetation', "Season"),bg = c('navy', 'tomato', "lightblue"))
+title('Variation partitioning by partial RDA')
 
 ## Show values for all partitions by putting 'cutoff' low enough:
 #plot(varp, cutoff = -Inf, cex = 0.7, bg=2:5)
@@ -153,9 +161,13 @@ anova(rda(species.hel ~ season +
           data=env_1))
 
 ```
-
 Physicochemical and Physical characteriscs are all statistically significant in their contributions to Odonata community composition, even though the amount of variation explained by Physicochemistry is small. There was no statistically significant of season in Odonata composition independent of these other measured drivers.
+
+<br/>
 
 #### Referecens
 https://wiki.qcbs.ca/r_workshop10
 
+http://rstudio-pubs-static.s3.amazonaws.com/161192_62db20511abe4a33a09a2f4043d6a868.html
+
+Legendre, P. (2008). Studying beta diversity: ecological variation partitioning by multiple regression and canonical analysis. Journal of plant ecology, 1(1), 3-8.
