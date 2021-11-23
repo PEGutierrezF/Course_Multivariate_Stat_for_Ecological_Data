@@ -17,7 +17,7 @@ library(devtools)
 install_github("vqv/ggbiplot") #ggbiplot
 library(ggbiplot)
 
-channel <- read.csv("data/channel_form.csv", header=TRUE)
+channel <- read.csv("data/PCA_channel_form.csv", header=TRUE)
 
 channel_1 <- select(channel, -Forma)
 summary(channel_1)

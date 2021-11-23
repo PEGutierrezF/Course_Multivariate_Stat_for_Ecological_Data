@@ -3,6 +3,8 @@ title: "Principal Component Analysis (PCA)"
 author: "Pablo E. Gutiérrez-Fonseca"
 date: "8/26/2021"
 output:
+  html_document:
+    df_print: paged
   pdf_document: default
 ---
 
@@ -21,17 +23,17 @@ library(factoextra) #get_pca_var()
 library(data.table) # data.table()
 library(labdsv) #loadings.pca(pca)
 
-library(devtools)
+# library(devtools)
 
-install_github("vqv/ggbiplot") #ggbiplot
-library(ggbiplot)
+# install_github("vqv/ggbiplot") #ggbiplot
+# library(ggbiplot)
 
 ```
 
 2. Segundo paso: cargar los datos.
 
 ```{r}
-channel <- read.csv("data/channel_form.csv", header=TRUE)
+channel <- read.csv("data/PCA_channel_form.csv", header=TRUE)
 head(channel)
 tail(channel)
 ```
@@ -138,7 +140,7 @@ Otra manera de ver el grafico
 
 ```{r}
 
-ggbiplot(channel.pca, labels=rownames(channel$Forma))
+# ggbiplot(channel.pca, labels=rownames(channel$Forma))
 
 ```
 

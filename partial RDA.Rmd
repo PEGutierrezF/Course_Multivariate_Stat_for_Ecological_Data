@@ -120,7 +120,7 @@ Variation partitioning is a type of analysis that combines RDA and partial RDA t
 
 #### Vamos a correr un RDA con las matrices (diferentes factores) separadas. 
 ```{r}
-varp <- varpart(species.hel, ~ temperature + oxygen + pH + conductivity, 
+varp <- varpart(species.hel, ~temperature + oxygen + pH + conductivity, 
                 ~plants + land_use + margin, ~season, data = env_1)
 varp
 ```
@@ -161,7 +161,7 @@ anova(rda(species.hel ~ season +
           data=env_1))
 
 ```
-Physicochemical and Physical characteriscs are all statistically significant in their contributions to Odonata community composition, even though the amount of variation explained by Physicochemistry is small. There was no statistically significant of season in Odonata composition independent of these other measured drivers.
+Physicochemical and Physical characteristics are all statistically significant in their contributions to Odonata community composition, even though the amount of variation explained by Physicochemistry is small. There was no statistically significant of season in Odonata composition independent of these other measured drivers.
 
 <br/>
 
