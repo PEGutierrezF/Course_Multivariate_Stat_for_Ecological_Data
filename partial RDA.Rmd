@@ -1,15 +1,18 @@
 ---
 title: "partial RDA"
-author: "Pablo E. Gutiérrez-Fonseca"
-date: "11/17/2021"
-output:
-  pdf_document: default
-  html_document: default
+author: 
+- "Pablo E. Guti&eacute;rrez-Fonseca"
+- "`r format(Sys.time(), '%d %B, %Y')`"
+layout: default
+permalink: /pages/Lectures/Introduction to R/
+output: html_document
 ---
 <br/>
 <br/>
 
-#### Primer paso: cargar las librerias que necesitas.
+#### **Step 1**
+Load libraries.<br>
+_Cargar las librerias que necesitas._
 ```{r, warning=FALSE, message=FALSE}
 library(ggplot2)
 library(dplyr)
@@ -18,7 +21,9 @@ library(vegan)
 
 <br/>
 
-#### Segundo paso: cargar los datos.
+#### **Step 2**
+Data<br>
+_Cargar los datos._
 ```{r}
 species=read.csv("data/RDA_species.csv", header=T, row.names=NULL, sep=",")
 env=read.csv("data/RDA_environmetal_standart.csv", header=T, row.names=NULL, sep=",")
@@ -26,7 +31,8 @@ env=read.csv("data/RDA_environmetal_standart.csv", header=T, row.names=NULL, sep
 
 <br/>
 
-#### Remover la columna de sitos.
+#### **Step 3**
+_Remover la columna de sitos._
 ```{r}
 species_1 <- select(species, -site)
 env_1 <- select(env, -site)
@@ -34,20 +40,30 @@ env_1 <- select(env, -site)
 
 <br/>
 
-#### Transformar datos.
-Hellinger es una transformacion recomendada por Legendre & Callagher (2001)
-en datos de abundancia y con una respuesta lineal
+#### **Step 4**
+**_Transformar datos._** _Hellinger es una transformaci&aacute;n recomendada por Legendre & Callagher (2001) en datos de abundancia y con una respuesta lineal._
 ```{r}
 species.hel <- decostand(species_1, method = "hellinger")
 ```
 
 <br/>
 
-## Partial RDA
-Basic formula:  rda(Y ~ X + Condition(Z))
-Partial RDA is a special case of RDA in which the response variables Y are related to explanatory variables X in the presence of additional explanatory variables, W, called covariables.
+## **Partial RDA**
+Basic formula:  rda(Y ~ X + Condition(Z))<br>
+_La formula b&aacute;sica es:  rda(Y ~ X + Condition(Z))_<br>
+
+Partial RDA is a special case of RDA in which the response variables Y are related to explanatory variables X in the presence of additional explanatory variables, W, called covariables.<br>
+_Un RDA parcial es un caso especial de un RDA simple en el que las **variables de respuesta Y** est&aacute;n relacionadas con las **variables explicativas X** en presencia de **variables explicativas adicionales, W,** llamadas **covariables**._<br>
 
 Partial RDA is thus a powerful tool when users what to assess the effect of environmental variables on species composition while taking into account the species variation due to other environmental variables with no interest. 
+_Por lo tanto, un RDA parcial es una herramienta poderosa cuando los usuarios eval&uacute;an el efecto de las variables ambientales en la composici&oacute;n de las especies, teniendo en cuenta la variaci&oacute;n de las especies debido a otras variables ambientales sin "inter&eacute;s"._<br>
+
+More information: Borcard et al (2012). page 172
+
+<br>
+
+#### **Step 1: partial RDA** 
+_Construir los modelos y ejecutar un RDA simple y un RDA parcial (i.e., controlado por covariables)._ 
 ```{r}
 
 simple_rda <- rda(species.hel ~ temperature + oxygen + pH + conductivity + 
@@ -59,11 +75,11 @@ partial_rda <- rda(species.hel ~ temperature + oxygen + pH + conductivity +
                 
 # anova(partial_rda, permutations = how(nperm = 999))
 ```
-More information: Borcard et al (2012). page 172
 
 <br/>
 
-#### Plot the results
+#### **Step 2: partial RDA** 
+Plot the results
 ```{r}
 #Construct the triplots
 #Scaling 1
@@ -113,61 +129,11 @@ text(scores(partial_rda, display="bp", choices=c(1), scaling=2)+0.05,
 
 <br/>
 
-## Variation partitioning by partial RDA
-Variation partitioning is a type of analysis that combines RDA and partial RDA to divide the variation of a response variable among two, three or four explanatory data sets. Variation partitioning are generally represented by Venn diagram in which the percentage of explained variance by each explanatory data set (or combination of data stets) is reported.
 
-<br/>
-
-#### Vamos a correr un RDA con las matrices (diferentes factores) separadas. 
-```{r}
-varp <- varpart(species.hel, ~temperature + oxygen + pH + conductivity, 
-                ~plants + land_use + margin, ~season, data = env_1)
-varp
-```
-Legendre (2008) [doi: 10.1093/jpe/rtm001] argued that "Negative values of Ra2 are interpreted as zeros; they correspond to cases where the explanatory variables explain less variation than random normal variables would."
-
-
-<br/>
-
-#### Plot the results
-The plot shows the adjusted R2 values associated with each partition or for overlapping partitions.
-```{r}
-plot(varp, digits = 2, Xnames = c('Enviromental factors', 'Vegetation', "Season"),bg = c('navy', 'tomato', "lightblue"))
-title('Variation partitioning by partial RDA')
-
-## Show values for all partitions by putting 'cutoff' low enough:
-#plot(varp, cutoff = -Inf, cex = 0.7, bg=2:5)
-```
-
-<br/>
-
-#### Then we can test the significance of each individual component. 
-```{r}
-
-# significance of partition from Environment (physicochemical variables)
-anova(rda(species.hel ~ temperature + oxygen + pH + conductivity + 
-          Condition(plants + land_use + margin) +  
-          Condition(season), data=env_1))
-
-# Significance of partition from Physical characteristics
-anova(rda(species.hel ~ plants + land_use + margin +
-          Condition(temperature + oxygen + pH + conductivity) +  
-          Condition(season), data=env_1))
-
-# Significance of partition from Season
-anova(rda(species.hel ~ season +
-          Condition(plants + land_use + margin) +
-          Condition(temperature + oxygen + pH + conductivity), 
-          data=env_1))
-
-```
-Physicochemical and Physical characteristics are all statistically significant in their contributions to Odonata community composition, even though the amount of variation explained by Physicochemistry is small. There was no statistically significant of season in Odonata composition independent of these other measured drivers.
-
-<br/>
-
-#### Referecens
+#### **References**
 https://wiki.qcbs.ca/r_workshop10
 
-http://rstudio-pubs-static.s3.amazonaws.com/161192_62db20511abe4a33a09a2f4043d6a868.html
+Legendre, P., & Legendre, L. (2012). Numerical ecology. Elsevier.
 
-Legendre, P. (2008). Studying beta diversity: ecological variation partitioning by multiple regression and canonical analysis. Journal of plant ecology, 1(1), 3-8.
+<br/>
+<br/>
