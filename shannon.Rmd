@@ -33,3 +33,7 @@ data.s.w =read.csv("D:/Curriculum/07_ Cursos/Course_Multivariate_Stat_for_Ecolog
 macroinv.s.w <- diversity(data.s.w, index = "shannon", MARGIN = 1, base = exp(1))
 ```
 
+```{r}
+scaled.dat <- scale(macroinv.s.w)
+```
+
