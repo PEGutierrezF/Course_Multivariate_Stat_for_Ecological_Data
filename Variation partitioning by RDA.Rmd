@@ -1,0 +1,152 @@
+---
+title: "Variation partitioning by RDA"
+author: 
+- "Pablo E. Guti&eacute;rrez-Fonseca"
+- "`r format(Sys.time(), '%d %B, %Y')`"
+layout: default
+permalink: /pages/Lectures/Introduction to R/
+output: html_document
+---
+<br/>
+<br/>
+
+#### **Step 1**
+Load libraries.<br>
+_Cargar las librerias que necesitas._
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+library(vegan)
+```
+
+<br/>
+
+#### **Step 2**
+Data<br>
+_Cargar los datos._
+```{r}
+species=read.csv("D:/Curriculum/07_ Cursos/Course_Multivariate_Stat_for_Ecological_Data/data/RDA_species.csv", header=T, row.names=NULL, sep=",")
+env=read.csv("D:/Curriculum/07_ Cursos/Course_Multivariate_Stat_for_Ecological_Data/data/RDA_environmetal_standart.csv", header=T, row.names=NULL, sep=",")
+```
+
+<br/>
+
+#### **Step 3**
+_Remover la columna de sitos._
+```{r}
+species_1 <- select(species, -site)
+env_1 <- select(env, -site)
+```
+
+<br/>
+
+#### **Step 4**
+**_Transformar datos._** _Hellinger es una transformaci&aacute;n recomendada por Legendre & Callagher (2001) en datos de abundancia y con una respuesta lineal._
+```{r}
+species.hel <- decostand(species_1, method = "hellinger")
+```
+
+<br/>
+
+## **Variation partitioning by partial RDA**
+**Variation partitioning** is a type of analysis that combines **simple RDA** and **partial RDA** to divide the variation of a response variable among two, three or four explanatory data sets. Variation partitioning are generally represented by Venn diagram in which the percentage of explained variance by each explanatory data set (or combination of data stets) is reported.<br>
+_**La partici&oacute;n de la variaci&oacute;n** es un tipo de an&aacute;lisis que combina un **RDA simple** y un **RDA parcial** para dividir la variaci&oacute;n de una variable de respuesta entre dos, tres o cuatro conjuntos de datos explicativos. La partici&oacute;n de variaci&oacute;n generalmente se representa mediante un diagrama de Venn en el que se informa el porcentaje de varianza explicada por cada conjunto de datos explicativos (o combinaci&oacute;n de stets de datos)._
+
+<br/>
+
+#### **Step 1: Partition the Variation** 
+_Construir el modelo y ejecutar un RDA con las matrices (diferentes factores) separadas._ 
+```{r}
+varp <- varpart(species.hel, ~ temperature + oxygen + pH + conductivity, 
+                ~ plants + land_use + margin, ~season, 
+                ~ shannon, data = env_1)
+varp
+```
+Legendre (2008) argued that "Negative values of Adj. R<sup>2</sup> are interpreted as zeros; they correspond to cases where the explanatory variables explain less variation than random normal variables would."<br>
+_Legendre (2008) sugiere que "**los valores negativos de Adj. R<sup>2</sup> se interpretan como ceros**". Estos valores corresponden a casos donde las variables explicativas explican menos variaci&oacute;n que las variables normales aleatorias"_
+
+
+<br/>
+
+#### **Step 2: Partition the Variation**
+Plot the results. The plot shows the adjusted R<sup>2</sup> values associated with each partition or for overlapping partitions.<br>
+_Graficar los resultados. El gr&aacute;fico muestra los valores de R<sup>2</sup> ajustados asociados con cada partici&oacute;n o para particiones superpuestas._
+```{r}
+plot(varp, digits = 2, Xnames = c('Enviromental factors', 'Vegetation', 
+                                  "Season","Macroinvertebrates"), 
+     bg = c('navy', 'tomato', "lightblue","gold"))
+
+## Show values for all partitions by putting 'cutoff' low enough:
+#plot(varp, cutoff = -Inf, cex = 0.7, bg=2:5)
+```
+
+<br/>
+
+#### **Step 3: Partition the Variation**
+Test the significance of each individual component.<br> 
+_Probar la significancia de cada componente individual._
+```{r}
+
+# significance of partition from Environment (physicochemical variables)
+anova(rda(species.hel ~ temperature + oxygen + pH + conductivity + 
+            Condition(plants + land_use + margin) +  
+            Condition(season) + Condition(shannon), data=env_1))
+
+# Significance of partition from Physical characteristics
+anova(rda(species.hel ~ plants + land_use + margin +
+            Condition(temperature + oxygen + pH + conductivity) +  
+            Condition(season) + Condition(shannon), data=env_1))
+
+# Significance of partition from Season
+anova(rda(species.hel ~ season +
+            Condition(plants + land_use + margin) +
+            Condition(temperature + oxygen + pH + conductivity)
+          + Condition(shannon), data=env_1))
+
+# Significance of partition from Macroinvertebrates
+anova(rda(species.hel ~ shannon +
+            Condition(plants + land_use + margin) +
+            Condition(temperature + oxygen + pH + conductivity) +
+            Condition(season), data=env_1))
+
+```
+<br/>
+Physicochemical variables and vegetation around urban lakes are all statistically significant in their contributions to Odonata community composition, even though the amount of variation explained by Physicochemistry is small. There was no statistically significant of season in Odonata composition independent of these other measured drivers.<br>
+_Las variables fisicoqu&iacute;micas y vegetales son estad&iacute;sticamente significativas en sus contribuciones a la variabilidad composici&oacute;n de la comunidad Odonata, a&uacute;n cuando la cantidad de variaci&oacute;n explicada por la fisicoqu&iacute;mica es peque&ntilde;a. No hubo relaci&oacute;n, estad&iacute;sticamente significativa, de la temporada sobre la composici&oacute;n de Odonata._
+
+<br/>
+
+#### **Glossary**
+
+**Total variation:** This is often the total sum of squared differences from the mean of each variable.<br>
+*Es la suma total de las diferencias al cuadrado de la media de cada variable.*
+
+**R<sup>2</sup>:** The coefficients of determination (R<sup>2</sup> values) are estimates of how much variation has been 'explained' by a given partition. In RDA, these are simply the squares of the correlation coefficients calculated.<br>
+_Los coeficientes de determinaci&oacute;n (valores R<sup>2</sup>) son estimaciones de cu&aacute;nta variaci&oacute;n ha sido explicada por una partici&oacute;n determinada. En RDA, estos son simplemente los cuadrados de los coeficientes de correlaci&oacute;n calculados_
+
+**Adjusted R<sup>2</sup>:** Adjusted coefficients of determination (Adj. R<sup>2</sup> values) take the number of explanatory variables used in an analysis into account. This "inflation" occurs even if the variables have no "true" explanatory power or are redundant relative to other explanatory variables. These estimates should be preferred relative to the unadjusted estimates.<br>
+*Los coeficientes de determinaci&oacute;n ajustados (Adj. R<sup>2</sup>) tienen en cuenta el n&uacute;mero de variables explicativas utilizadas en un an&aacute;lisis. Esta "inflaci&oacute;n" ocurre incluso si las variables no tienen un poder explicativo "verdadero" o son redundantes en relaci&oacute;n con otras variables explicativas. Estas estimaciones deben preferirse en relaci&oacute;n con las estimaciones no ajustadas.*
+
+
+**Significance:** P-values associated with the R<sup>2</sup> values will be calculated by permutation. The overall model and the individual partitions will be tested for significance. Only if the overall model is significant should the individual partitions be examined.<br>
+*Los valores p asociados con los valores R<sup>2</sup> se calcular&aacute;n por permutaci&oacute;n. Se probar&iacute;a la importancia del modelo general y las particiones individuales. Solo si el modelo general es significativo deben examinarse las particiones individuales.*
+
+<br/>
+
+#### **Please, Note**
+The shared partition(s) is not an interaction term (e.g., as in ANOVA-like analyses), cannot be tested, and hence cannot be assigned a significance value. This is simply the variation in the response data that could be explained by both explanatory matrices. That is, the explanatory matrices are redundant in this partition. The larger this fraction is, the more multicollinearity is present in the model.<br>
+_Las particiones compartidas **no se refieren al t&eacute;rmino de interacci&oacute;n como en los an&aacute;lisis de tipo ANOVA**, no se pueden probar y, por lo tanto, no se les puede asignar un valor de significancia. Esta es simplemente la variaci&oacute;n en los datos de respuesta que podr&iacute;a explicarse por ambas matrices explicativas. Es decir, las matrices explicativas son redundantes en esta partici&oacute;n. Cuanto m&aacute;s grande es esta fracci&oacute;n, m&aacute;s multicolinealidad est&aacute; presente en el modelo._
+
+<br/>
+
+#### **References**
+https://wiki.qcbs.ca/r_workshop10
+
+Legendre, P. (2008). Studying beta diversity: ecological variation partitioning by multiple regression and canonical analysis. Journal of plant ecology, 1(1), 3-8.
+
+Legendre, P., & Gallagher, E. D. (2001). Ecologically meaningful transformations for ordination of species data. Oecologia, 129(2), 271-280.
+
+Legendre, P., & Legendre, L. (2012). Numerical ecology. Elsevier.
+
+<br/>
+<br/>
