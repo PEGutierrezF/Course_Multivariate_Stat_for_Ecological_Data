@@ -4,3 +4,32 @@ author: "Pablo E. Gutiérrez-Fonseca"
 date: "2/8/2022"
 output: html_document
 ---
+
+<br/>
+<br/>
+
+#### **Step 1**
+Load libraries.<br>
+_Cargar las librerias que necesitas._
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+library(vegan)
+```
+
+<br/>
+
+#### **Step 2**
+Data<br>
+_Cargar los datos._
+```{r}
+data.s.w =read.csv("D:/Curriculum/07_ Cursos/Course_Multivariate_Stat_for_Ecological_Data/data/shannon_macroinv.csv", header=T, row.names=NULL, sep=",")
+
+```
+
+<br/>
+
+```{r}
+macroinv.s.w <- diversity(data.s.w, index = "shannon", MARGIN = 1, base = exp(1))
+```
+
